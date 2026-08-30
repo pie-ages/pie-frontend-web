@@ -1,69 +1,59 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { companySignupSchema } from "./company-signup.schema";
+import { submitCompanySignup } from "./company-signup.service";
+import { styles } from "./CompanySignupForm.styles";
 
-function CompanySignupForm() {
-  const [nomeEmpresa, setNomeEmpresa] = useState<string>("");
-  const [cnpj, setCnpj] = useState<string>("");
-  const [site, setSite] = useState<string>("");
-  const [razaoSocial, setRazaoSocial] = useState<string>("");
-  const [responsavel, setResponsavel] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [senha, setSenha] = useState<string>("");
-  const [confirmarSenha, setConfirmarSenha] = useState<string>("");
+const initialValues = {
+  nomeEmpresa: "",
+  cnpj: "",
+  site: "",
+  razaoSocial: "",
+  responsavel: "",
+  email: "",
+  senha: "",
+  confirmarSenha: "",
+};
 
-  const [mostrarSenha, setMostrarSenha] = useState<boolean>(false);
-  const [erro, setErro] = useState<string>("");
-  const [carregando, setCarregando] = useState<boolean>(false);
-  const [sucesso, setSucesso] = useState<boolean>(false);
+export default function CompanySignupForm() {
+  const router = useRouter();
+  const [form, setForm] = useState(initialValues);
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [erro, setErro] = useState("");
+  const [carregando, setCarregando] = useState(false);
+  const [sucesso, setSucesso] = useState(false);
 
-  function validarFormulario(): string {
-    if (!nomeEmpresa || !cnpj || !razaoSocial || !responsavel || !email) {
-      return "Preencha todos os campos obrigatórios.";
-    }
+  const handleChange = (field: keyof typeof initialValues, value: string) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    if (erro) setErro("");
+  };
 
-    const somenteNumeros = cnpj.replace(/[^0-9]/g, "");
-    if (somenteNumeros.length !== 14) {
-      return "CNPJ inválido. Ele deve ter 14 números.";
-    }
-
-    if (!email.includes("@") || !email.includes(".")) {
-      return "Digite um e-mail válido.";
-    }
-
-    if (senha.length < 6) {
-      return "A senha deve ter pelo menos 6 caracteres.";
-    }
-
-    if (senha !== confirmarSenha) {
-      return "As senhas não são iguais.";
-    }
-
-    return "";
-  }
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const mensagemErro = validarFormulario();
+    const result = companySignupSchema.safeParse(form);
 
-    if (mensagemErro) {
-      setErro(mensagemErro);
+    if (!result.success) {
+      const firstError = result.error.issues[0];
+      setErro(firstError?.message ?? "Dados inválidos.");
       return;
     }
 
     setErro("");
     setCarregando(true);
 
-    setTimeout(() => {
-      setCarregando(false);
+    try {
+      await submitCompanySignup(form);
       setSucesso(true);
-
-      setTimeout(() => {
-        window.location.href = "/login";
-      }, 1000);
-    }, 1500);
-  }
+      router.push("/login");
+    } catch {
+      setErro("Não foi possível enviar o pedido. Tente novamente.");
+    } finally {
+      setCarregando(false);
+    }
+  };
 
   return (
     <div style={styles.page}>
@@ -120,8 +110,8 @@ function CompanySignupForm() {
                 <input
                   type="text"
                   placeholder="Ateliê Nove"
-                  value={nomeEmpresa}
-                  onChange={(e) => setNomeEmpresa(e.target.value)}
+                  value={form.nomeEmpresa}
+                  onChange={(e) => handleChange("nomeEmpresa", e.target.value)}
                   style={styles.input}
                 />
 
@@ -131,8 +121,8 @@ function CompanySignupForm() {
                     <input
                       type="text"
                       placeholder="00.000.000/0001-00"
-                      value={cnpj}
-                      onChange={(e) => setCnpj(e.target.value)}
+                      value={form.cnpj}
+                      onChange={(e) => handleChange("cnpj", e.target.value)}
                       style={styles.input}
                     />
                   </div>
@@ -141,8 +131,8 @@ function CompanySignupForm() {
                     <input
                       type="text"
                       placeholder="@atelie.nove"
-                      value={site}
-                      onChange={(e) => setSite(e.target.value)}
+                      value={form.site}
+                      onChange={(e) => handleChange("site", e.target.value)}
                       style={styles.input}
                     />
                   </div>
@@ -152,8 +142,8 @@ function CompanySignupForm() {
                 <input
                   type="text"
                   placeholder="Nove Confecções Ltda"
-                  value={razaoSocial}
-                  onChange={(e) => setRazaoSocial(e.target.value)}
+                  value={form.razaoSocial}
+                  onChange={(e) => handleChange("razaoSocial", e.target.value)}
                   style={styles.input}
                 />
 
@@ -163,8 +153,8 @@ function CompanySignupForm() {
                     <input
                       type="text"
                       placeholder="Marina Bezerra"
-                      value={responsavel}
-                      onChange={(e) => setResponsavel(e.target.value)}
+                      value={form.responsavel}
+                      onChange={(e) => handleChange("responsavel", e.target.value)}
                       style={styles.input}
                     />
                   </div>
@@ -173,8 +163,8 @@ function CompanySignupForm() {
                     <input
                       type="email"
                       placeholder="marina@atelienove.com.br"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      value={form.email}
+                      onChange={(e) => handleChange("email", e.target.value)}
                       style={styles.input}
                     />
                   </div>
@@ -187,13 +177,13 @@ function CompanySignupForm() {
                       <input
                         type={mostrarSenha ? "text" : "password"}
                         placeholder="••••••••••••"
-                        value={senha}
-                        onChange={(e) => setSenha(e.target.value)}
+                        value={form.senha}
+                        onChange={(e) => handleChange("senha", e.target.value)}
                         style={{ ...styles.input, paddingRight: 60 }}
                       />
                       <button
                         type="button"
-                        onClick={() => setMostrarSenha(!mostrarSenha)}
+                        onClick={() => setMostrarSenha((prev) => !prev)}
                         style={styles.toggleSenha}
                       >
                         {mostrarSenha ? "Ocultar" : "Mostrar"}
@@ -205,8 +195,8 @@ function CompanySignupForm() {
                     <input
                       type={mostrarSenha ? "text" : "password"}
                       placeholder="••••••••••••"
-                      value={confirmarSenha}
-                      onChange={(e) => setConfirmarSenha(e.target.value)}
+                      value={form.confirmarSenha}
+                      onChange={(e) => handleChange("confirmarSenha", e.target.value)}
                       style={styles.input}
                     />
                   </div>
@@ -225,141 +215,3 @@ function CompanySignupForm() {
     </div>
   );
 }
-
-const styles: { [key: string]: React.CSSProperties } = {
-  page: {
-    display: "flex",
-    minHeight: "100vh",
-    fontFamily: "Arial, sans-serif",
-  },
-  sidebar: {
-    width: "40%",
-    minWidth: 320,
-    backgroundColor: "#5A1418",
-    color: "#fff",
-    padding: "40px",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "space-between",
-  },
-  logo: {
-    fontWeight: "bold",
-    fontSize: 14,
-  },
-  logoSlash: {
-    fontWeight: "normal",
-    opacity: 0.7,
-  },
-  headline: {
-    fontSize: 34,
-    lineHeight: 1.2,
-    marginBottom: 16,
-  },
-  headlineText: {
-    fontSize: 14,
-    lineHeight: 1.6,
-    color: "rgba(255,255,255,0.8)",
-    maxWidth: 280,
-  },
-  stats: {
-    display: "flex",
-    gap: 40,
-    borderTop: "1px solid rgba(255,255,255,0.2)",
-    paddingTop: 20,
-  },
-  statNumber: {
-    fontSize: 22,
-    fontWeight: "bold",
-    margin: 0,
-  },
-  statLabel: {
-    fontSize: 11,
-    textTransform: "uppercase",
-    color: "rgba(255,255,255,0.6)",
-    margin: 0,
-  },
-  formSide: {
-    flex: 1,
-    display: "flex",
-    justifyContent: "center",
-    padding: "60px 40px",
-    backgroundColor: "#fff",
-  },
-  formBox: {
-    width: "100%",
-    maxWidth: 480,
-  },
-  divider: {
-    width: 60,
-    height: 2,
-    backgroundColor: "#C9A46A",
-    marginBottom: 24,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    margin: 0,
-    color: "#111",
-  },
-  subtitle: {
-    fontSize: 13.5,
-    color: "#666",
-    marginTop: 8,
-    lineHeight: 1.5,
-  },
-  row: {
-    display: "flex",
-    gap: 16,
-  },
-  col: {
-    flex: 1,
-  },
-  label: {
-    display: "block",
-    fontSize: 13,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop: 16,
-    marginBottom: 6,
-  },
-  input: {
-    width: "100%",
-    padding: "10px 12px",
-    fontSize: 14,
-    color: "#111",
-    backgroundColor: "#F7F5F2",
-    border: "1px solid #ddd",
-    borderRadius: 6,
-    boxSizing: "border-box",
-  },
-  toggleSenha: {
-    position: "absolute",
-    right: 8,
-    top: "50%",
-    transform: "translateY(-50%)",
-    background: "none",
-    border: "none",
-    color: "#5A1418",
-    fontSize: 12,
-    fontWeight: "bold",
-    cursor: "pointer",
-  },
-  erro: {
-    color: "#b91c1c",
-    fontSize: 13,
-    marginTop: 12,
-  },
-  botao: {
-    width: "100%",
-    padding: "12px",
-    marginTop: 20,
-    fontSize: 15,
-    color: "#fff",
-    backgroundColor: "#5A1418",
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer",
-  },
-};
-
-export default CompanySignupForm;
