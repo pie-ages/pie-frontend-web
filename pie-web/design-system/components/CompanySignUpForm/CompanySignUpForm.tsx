@@ -20,12 +20,12 @@ const initialValues = {
   confirmPassword: '',
 }
 
-type FieldErrors = Partial<Record<keyof typeof initialValues, string>>
-
 export function CompanySignUpForm() {
   const router = useRouter()
   const [form, setForm] = useState(initialValues)
-  const [errors, setErrors] = useState<FieldErrors>({})
+  const [errors, setErrors] = useState<
+    Partial<Record<keyof typeof initialValues, string>>
+  >({})
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
