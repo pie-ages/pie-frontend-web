@@ -1,0 +1,211 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.leftPanel {
+  display: none;
+  width: 50%;
+  background-color: #5e1914;
+  color: white;
+  padding: 3rem;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .leftPanel {
+    display: flex;
+  }
+}
+
+.brandTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.brandSubtitle {
+  font-weight: normal;
+  color: #d1d5db;
+}
+
+.mainHeading {
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.description {
+  max-width: 28rem;
+  font-size: 0.875rem;
+  color: #e5e7eb;
+}
+
+.statsContainer {
+  display: flex;
+  gap: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1.5rem;
+}
+
+.statNumber {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #d1d5db;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.rightPanel {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 2rem;
+}
+
+@media (min-width: 768px) {
+  .rightPanel {
+    width: 50%;
+  }
+}
+
+.formWrapper {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.formTitle {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.formSubtitle {
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+  margin-bottom: 2rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.inputContainer {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+}
+
+.input:focus {
+  border-color: #5e1914;
+  outline: none;
+}
+
+.input:disabled {
+  opacity: 0.7;
+  background-color: #f3f4f6;
+}
+
+.togglePasswordBtn {
+  position: absolute;
+  right: 0.75rem;
+  top: 0.5rem;
+  font-size: 0.75rem;
+  color: #6b7280;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.togglePasswordBtn:hover {
+  color: #374151;
+}
+
+.errorText {
+  font-size: 0.875rem;
+  color: #dc2626;
+  margin-bottom: 0.5rem;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.primaryBtn {
+  width: 100%;
+  background-color: #5e1914;
+  color: white;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.primaryBtn:hover:not(:disabled) {
+  background-color: #4a1410;
+}
+
+.primaryBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.secondaryBtn {
+  width: 100%;
+  background-color: #fae8e3;
+  color: #5e1914;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.secondaryBtn:hover:not(:disabled) {
+  background-color: #f5d9d1;
+}
+
+.footerText {
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.link {
+  font-weight: 600;
+  color: #5e1914;
+  text-decoration: underline;
+}
