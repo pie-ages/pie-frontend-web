@@ -20,10 +20,85 @@ const initialValues = {
   confirmPassword: '',
 }
 
+const styles: { [key: string]: React.CSSProperties } = {
+  container: {
+    display: 'flex',
+    flex: '1 1 0%',
+    backgroundColor: 'var(--background)',
+    paddingLeft: 48,
+    paddingRight: 48,
+    paddingTop: 120,
+    paddingBottom: 48,
+  },
+  successBox: {
+    display: 'flex',
+    width: '100%',
+    maxWidth: 420,
+    flexDirection: 'column',
+    gap: 4,
+  },
+  formBox: {
+    display: 'flex',
+    width: '100%',
+    maxWidth: 420,
+    flexDirection: 'column',
+    gap: 28,
+    borderTop: '2px solid var(--brand-secondary)',
+    paddingTop: 36,
+  },
+  headerBlock: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 4,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 800,
+    color: 'var(--foreground)',
+    margin: 0,
+  },
+  subtitle: {
+    fontSize: 14,
+    color: 'color-mix(in oklch, var(--foreground) 55%, transparent)',
+    margin: 0,
+  },
+  subtitleLeading: {
+    fontSize: 14,
+    lineHeight: '21.7px',
+    color: 'color-mix(in oklch, var(--foreground) 55%, transparent)',
+    margin: 0,
+  },
+  form: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
+  },
+  row: {
+    display: 'flex',
+    gap: 16,
+  },
+  submitError: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: 'var(--destructive)',
+    margin: 0,
+  },
+  submitButton: {
+    marginTop: 8,
+    height: 'auto',
+    width: '100%',
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 12,
+    paddingBottom: 12,
+    fontWeight: 800,
+  },
+}
+
 export function CompanySignUpForm() {
   const router = useRouter()
   const [form, setForm] = useState(initialValues)
-  const [errors, setErrors] = useState<
+  const [errors, setErrors] = useState
     Partial<Record<keyof typeof initialValues, string>>
   >({})
   const [submitError, setSubmitError] = useState('')
@@ -71,12 +146,10 @@ export function CompanySignUpForm() {
 
   if (isSuccess) {
     return (
-      <div className="flex flex-1 bg-background px-12 pt-[120px] pb-12 md:pl-[184px]">
-        <div className="flex w-full max-w-[420px] flex-col gap-1">
-          <h2 className="text-h2 font-extrabold text-foreground">
-            Pedido enviado com sucesso!
-          </h2>
-          <p className="text-sm text-foreground/55">
+      <div style={styles.container}>
+        <div style={styles.successBox}>
+          <h2 style={styles.title}>Pedido enviado com sucesso!</h2>
+          <p style={styles.subtitle}>
             Você será redirecionado para o login...
           </p>
         </div>
@@ -85,23 +158,17 @@ export function CompanySignUpForm() {
   }
 
   return (
-    <div className="flex flex-1 bg-background px-12 pt-[120px] pb-12 md:pl-[184px]">
-      <div className="flex w-full max-w-[420px] flex-col gap-7 border-t-2 border-brand-secondary pt-9">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-h2 font-extrabold text-foreground">
-            Pedir entrada na plataforma
-          </h2>
-          <p className="text-sm leading-[21.7px] text-foreground/55">
+    <div style={styles.container}>
+      <div style={styles.formBox}>
+        <div style={styles.headerBlock}>
+          <h2 style={styles.title}>Pedir entrada na plataforma</h2>
+          <p style={styles.subtitleLeading}>
             A equipe do Piê revisa cada loja antes de liberar o painel. A
             resposta chega por e-mail em até 2 dias úteis.
           </p>
         </div>
 
-        <form
-          onSubmit={handleSubmit}
-          noValidate
-          className="flex flex-col gap-4"
-        >
+        <form onSubmit={handleSubmit} noValidate style={styles.form}>
           <FormField
             id="companyName"
             label="Nome da marca"
@@ -111,7 +178,7 @@ export function CompanySignUpForm() {
             error={errors.companyName}
           />
 
-          <div className="flex gap-4">
+          <div style={styles.row}>
             <FormField
               id="cnpj"
               label="CNPJ"
@@ -141,7 +208,7 @@ export function CompanySignUpForm() {
             error={errors.legalName}
           />
 
-          <div className="flex gap-4">
+          <div style={styles.row}>
             <FormField
               id="contactName"
               label="Responsável"
@@ -161,7 +228,7 @@ export function CompanySignUpForm() {
             />
           </div>
 
-          <div className="flex gap-4">
+          <div style={styles.row}>
             <PasswordField
               id="password"
               label="Senha"
@@ -180,16 +247,12 @@ export function CompanySignUpForm() {
             />
           </div>
 
-          {submitError && (
-            <p className="text-sm font-semibold text-destructive">
-              {submitError}
-            </p>
-          )}
+          {submitError && <p style={styles.submitError}>{submitError}</p>}
 
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="mt-2 h-auto w-full px-4 py-3 font-extrabold"
+            style={styles.submitButton}
           >
             {isSubmitting ? 'Enviando...' : 'Enviar pedido para análise'}
           </Button>
