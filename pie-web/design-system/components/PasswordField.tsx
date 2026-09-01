@@ -1,43 +1,37 @@
 'use client'
 
-import { useState, type ComponentProps } from 'react'
+import { useState, type ComponentProps, type CSSProperties } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
 import { Button } from '@/design-system/components/ui/button'
 import { Input } from '@/design-system/components/ui/input'
 import { Label } from '@/design-system/components/ui/label'
 
-type PasswordFieldProps = Omit<
-  ComponentProps<typeof Input>,
-  'id' | 'className' | 'type'
-> & {
+type PasswordFieldProps = Omit<ComponentProps<typeof Input>, 'id' | 'type'> & {
   id: string
   label: string
   error?: string
-  className?: string
+  style?: CSSProperties
 }
 
 export function PasswordField({
   id,
   label,
   error,
-  className,
+  style,
   ...inputProps
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false)
 
   return (
-    <div className={cn('flex flex-1 flex-col gap-1', className)}>
-      <Label htmlFor={id} className="text-label font-semibold text-foreground">
-        {label}
-      </Label>
-      <div className="relative">
+    <div style={{ display: 'flex', flex: '1 1 0%', flexDirection: 'column', gap: '0.25rem', ...style }}>
+      <Label htmlFor={id}>{label}</Label>
+      <div style={{ position: 'relative' }}>
         <Input
           id={id}
           type={visible ? 'text' : 'password'}
           aria-invalid={!!error}
-          className="h-auto bg-muted px-3 py-3 pr-12"
+          style={{ height: 'auto', backgroundColor: 'var(--muted)', padding: '0.75rem', paddingRight: '3rem' }}
           {...inputProps}
         />
         <Button
@@ -45,17 +39,23 @@ export function PasswordField({
           variant="ghost"
           size="icon-sm"
           onClick={() => setVisible((prev) => !prev)}
-          aria-label={
-            visible
-              ? `Ocultar ${label.toLowerCase()}`
-              : `Mostrar ${label.toLowerCase()}`
-          }
-          className="absolute top-1/2 right-1 -translate-y-1/2 text-primary hover:bg-transparent"
+          aria-label={visible ? `Ocultar ${label.toLowerCase()}` : `Mostrar ${label.toLowerCase()}`}
+          style={{
+            position: 'absolute',
+            top: '50%',
+            right: '0.25rem',
+            transform: 'translateY(-50%)',
+            color: 'var(--primary)',
+          }}
         >
           {visible ? <EyeOff /> : <Eye />}
         </Button>
       </div>
-      {error && <p className="text-xs font-medium text-destructive">{error}</p>}
+      {error && (
+        <p style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--destructive)', margin: 0 }}>
+          {error}
+        </p>
+      )}
     </div>
   )
 }

@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { buttonVariants } from '@/design-system/components/ui/button'
 
 export default function Page() {
   return (
@@ -8,10 +7,7 @@ export default function Page() {
       <p className="mt-2 text-muted-foreground">
         Página de login da plataforma Piê.
       </p>
-      <Link
-        href="/CompanySignUp"
-        className={buttonVariants({ className: 'mt-6' })}
-      >
+      <Link href="/CompanySignUp" style={{ display: 'inline-block', marginTop: '1.5rem' }}>
         Cadastrar minha loja
       </Link>
     </main>

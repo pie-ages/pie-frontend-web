@@ -27,8 +27,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: 'var(--background)',
     paddingLeft: 48,
     paddingRight: 48,
-    paddingTop: 120,
-    paddingBottom: 48,
+    paddingTop: 'clamp(40px, 8vh, 120px)',
+    paddingBottom: 'clamp(24px, 4vh, 48px)',
   },
   successBox: {
     display: 'flex',
@@ -42,9 +42,9 @@ const styles: { [key: string]: React.CSSProperties } = {
     width: '100%',
     maxWidth: 420,
     flexDirection: 'column',
-    gap: 28,
-    borderTop: '2px solid var(--brand-secondary)',
-    paddingTop: 36,
+    gap: 'clamp(16px, 2.5vh, 28px)',
+    borderTop: '2px solid var(--color-brand-secondary)',
+    paddingTop: 'clamp(20px, 3vh, 36px)',
   },
   headerBlock: {
     display: 'flex',
@@ -71,7 +71,7 @@ const styles: { [key: string]: React.CSSProperties } = {
   form: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 16,
+    gap: 'clamp(10px, 1.5vh, 16px)',
   },
   row: {
     display: 'flex',
@@ -98,9 +98,7 @@ const styles: { [key: string]: React.CSSProperties } = {
 export function CompanySignUpForm() {
   const router = useRouter()
   const [form, setForm] = useState(initialValues)
-  const [errors, setErrors] = useState
-    Partial<Record<keyof typeof initialValues, string>>
-  >({})
+  const [errors, setErrors] = useState<Partial<Record<keyof typeof initialValues, string>>>({})
   const [submitError, setSubmitError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)

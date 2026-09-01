@@ -1,37 +1,38 @@
-import type { ComponentProps } from 'react'
+import type { ComponentProps, CSSProperties } from 'react'
 
-import { cn } from '@/lib/utils'
 import { Input } from '@/design-system/components/ui/input'
 import { Label } from '@/design-system/components/ui/label'
 
-type FormFieldProps = Omit<ComponentProps<typeof Input>, 'id' | 'className'> & {
+type FormFieldProps = Omit<ComponentProps<typeof Input>, 'id'> & {
   id: string
   label: string
   error?: string
-  className?: string
-  inputClassName?: string
+  style?: CSSProperties
+  inputStyle?: CSSProperties
 }
 
 export function FormField({
   id,
   label,
   error,
-  className,
-  inputClassName,
+  style,
+  inputStyle,
   ...inputProps
 }: FormFieldProps) {
   return (
-    <div className={cn('flex flex-1 flex-col gap-1', className)}>
-      <Label htmlFor={id} className="text-label font-semibold text-foreground">
-        {label}
-      </Label>
+    <div style={{ display: 'flex', flex: '1 1 0%', flexDirection: 'column', gap: '0.25rem', ...style }}>
+      <Label htmlFor={id}>{label}</Label>
       <Input
         id={id}
         aria-invalid={!!error}
-        className={cn('h-auto bg-muted px-3 py-3', inputClassName)}
+        style={{ height: 'auto', backgroundColor: 'var(--muted)', padding: '0.75rem', ...inputStyle }}
         {...inputProps}
       />
-      {error && <p className="text-xs font-medium text-destructive">{error}</p>}
+      {error && (
+        <p style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--destructive)', margin: 0 }}>
+          {error}
+        </p>
+      )}
     </div>
   )
 }
