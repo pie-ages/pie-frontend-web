@@ -1,9 +1,7 @@
 'use client'
 
 import { useState, type ComponentProps, type CSSProperties } from 'react'
-import { Eye, EyeOff } from 'lucide-react'
 
-import { Button } from '@/design-system/components/ui/button'
 import { Input } from '@/design-system/components/ui/input'
 import { Label } from '@/design-system/components/ui/label'
 
@@ -31,25 +29,26 @@ export function PasswordField({
           id={id}
           type={visible ? 'text' : 'password'}
           aria-invalid={!!error}
-          style={{ height: 'auto', backgroundColor: 'var(--muted)', padding: '0.75rem', paddingRight: '3rem' }}
+          style={{ height: 'auto', backgroundColor: 'var(--muted)', padding: '0.75rem', paddingRight: '5rem' }}
           {...inputProps}
         />
-        <Button
+        <button
           type="button"
-          variant="ghost"
-          size="icon-sm"
           onClick={() => setVisible((prev) => !prev)}
-          aria-label={visible ? `Ocultar ${label.toLowerCase()}` : `Mostrar ${label.toLowerCase()}`}
           style={{
             position: 'absolute',
             top: '50%',
-            right: '0.25rem',
+            right: '0.75rem',
             transform: 'translateY(-50%)',
-            color: 'var(--primary)',
+            fontSize: '0.75rem',
+            color: 'var(--muted-foreground)',
+            background: 'none',
+            border: 'none',
+            cursor: 'pointer',
           }}
         >
-          {visible ? <EyeOff /> : <Eye />}
-        </Button>
+          {visible ? 'Ocultar' : 'Mostrar'}
+        </button>
       </div>
       {error && (
         <p style={{ fontSize: '0.75rem', fontWeight: 500, color: 'var(--destructive)', margin: 0 }}>
