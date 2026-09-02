@@ -2,12 +2,12 @@
 
 import { useRouter } from 'next/navigation'
 import { FormEvent, useState } from 'react'
-import { companySignUpSchema } from '@/schemas/CompanySignUpSchema'
-import { submitCompanySignUp } from '@/services/Companies'
-import { formatCNPJ } from '@/lib/cnpj'
-import { Button } from '@/design-system/components/ui/button'
-import { FormField } from '@/design-system/components/FormField'
-import { PasswordField } from '@/design-system/components/PasswordField'
+import { companySignUpSchema } from '../../../schemas/CompanySignUpSchema'
+import { submitCompanySignUp } from '../../../services/Companies'
+import { formatCNPJ } from '../../../lib/cnpj'
+import { Button } from '../ui/button'
+import { FormField } from '.././FormField'
+import { PasswordField } from '.././PasswordField'
 
 const initialValues = {
   companyName: '',

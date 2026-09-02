@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react'
 
-import { StatItem } from '@/design-system/components/StatItem'
+import { StatItem } from '../StatItem'
 import sidebarStyles from './CompanySignUpSidebar.module.css'
 
 const styles: { [key: string]: CSSProperties } = {

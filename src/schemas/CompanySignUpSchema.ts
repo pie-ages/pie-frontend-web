@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { isValidCNPJ } from '@/lib/cnpj'
+import { isValidCNPJ } from '../lib/cnpj'
 
 const passwordRules = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/
 

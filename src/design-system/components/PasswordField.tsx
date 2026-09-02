@@ -3,9 +3,9 @@
 import { useState, type ComponentProps, type CSSProperties } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 
-import { Button } from '@/design-system/components/ui/button'
-import { Input } from '@/design-system/components/ui/input'
-import { Label } from '@/design-system/components/ui/label'
+import { Button } from './ui/button'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
 
 type PasswordFieldProps = Omit<ComponentProps<typeof Input>, 'id' | 'type'> & {
   id: string

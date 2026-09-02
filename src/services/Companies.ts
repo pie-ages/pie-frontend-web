@@ -1,4 +1,4 @@
-import type { CompanySignUpFormValues } from '@/schemas/CompanySignUpSchema'
+import type { CompanySignUpFormValues } from '../schemas/CompanySignUpSchema'
 
 export async function submitCompanySignUp(
   _: CompanySignUpFormValues,

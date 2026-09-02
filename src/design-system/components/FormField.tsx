@@ -1,7 +1,7 @@
 import type { ComponentProps, CSSProperties } from 'react'
 
-import { Input } from '@/design-system/components/ui/input'
-import { Label } from '@/design-system/components/ui/label'
+import { Input } from './ui/input'
+import { Label } from './ui/label'
 
 type FormFieldProps = Omit<ComponentProps<typeof Input>, 'id'> & {
   id: string
