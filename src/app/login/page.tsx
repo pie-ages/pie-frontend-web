@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import styles from './page.module.css';
+import { toast } from 'sonner';
+import { Eye, EyeOff } from 'lucide-react';
+import styles from '@/app/login/login.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -11,33 +13,32 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
     
     if (!email || !password) {
-      setError('Por favor, preencha todos os campos.');
+      toast.error('Por favor, preencha todos os campos.', { id: 'login-error' });
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-      setError('Insira um formato de e-mail válido.');
+      toast.error('Insira um formato de e-mail válido.', { id: 'login-error' });
       return;
     }
 
     setIsLoading(true);
 
     setTimeout(() => {
-      const loginData = {
-        email: email,
-        password: password
-      };
-      
-      console.log('Objeto JSON obtido:', JSON.stringify(loginData, null, 2));
       setIsLoading(false);
+      
+      if (email !== 'teste@ages.com.br' || password !== '123456') {
+        toast.error('E-mail ou senha inválidos.', { id: 'login-error' });
+        return;
+      }
+      
+      toast.success('Login realizado com sucesso!');
       router.push('/dashboard');
     }, 1500); 
   };
@@ -78,10 +79,13 @@ export default function LoginPage() {
               <label className={styles.label}>E-mail</label>
               <input
                 type="email"
-                placeholder="marina@atelienove.com.br"
+                placeholder="Digite seu e-mail de acesso"
                 className={styles.input}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  toast.dismiss('login-error');
+                }}
                 disabled={isLoading}
               />
             </div>
@@ -91,23 +95,25 @@ export default function LoginPage() {
               <div className={styles.inputContainer}>
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••"
+                  placeholder="Digite sua senha"
                   className={styles.input}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    toast.dismiss('login-error');
+                  }}
                   disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className={styles.togglePasswordBtn}
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                 >
-                  {showPassword ? 'Ocultar' : 'Mostrar'}
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
-
-            {error && <p className={styles.errorText}>{error}</p>}
 
             <div className={styles.buttonGroup}>
               <button

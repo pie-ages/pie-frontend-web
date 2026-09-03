@@ -1,3 +1,5 @@
+import { Toaster } from 'sonner';
+
 export default function RootLayout({
   children,
 }: {
@@ -12,6 +14,7 @@ export default function RootLayout({
         fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
       }}>
         {children}
+        <Toaster richColors position="top-right" />
       </body>
     </html>
   )
