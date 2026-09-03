@@ -1,0 +1,40 @@
+.input {
+  height: 2rem;
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--input);
+  background-color: transparent;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.input::placeholder {
+  color: var(--muted-foreground);
+}
+
+.input:focus-visible {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 50%, transparent);
+}
+
+.input:disabled {
+  pointer-events: none;
+  cursor: not-allowed;
+  background-color: color-mix(in oklch, var(--input) 50%, transparent);
+  opacity: 0.5;
+}
+
+.input[aria-invalid='true'] {
+  border-color: var(--destructive);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--destructive) 20%, transparent);
+}
+
+.input::-ms-reveal,
+.input::-ms-clear,
+.input::-webkit-credentials-auto-fill-button {
+  display: none;
+}

@@ -1,0 +1,33 @@
+/**
+ * Piê design tokens — extracted from Figma (file Vbwceiomj0s82OhYRtrdMh, node 586:6063).
+ * Values shadcn already owns (primary, muted, input, foreground, radius) are set
+ * in app/globals.css's `:root` block; this file only adds what shadcn doesn't have.
+ * Plain CSS custom properties (no Tailwind in this project — components read
+ * these directly via var(--text-display) etc. in inline styles/CSS Modules).
+ */
+:root {
+  /* Piê / Secondary Brand — accent dividers, stat captions */
+  --color-brand-secondary: #cba790;
+
+  /* Semantic type scale (Archivo), named after the Figma layer names */
+  --text-display: 3.5rem; /* 56px — Semantic/Heading 1 */
+  --text-display--line-height: 3.64rem; /* 58.24px */
+  --text-display--letter-spacing: -0.07rem; /* -1.12px */
+
+  --text-h2: 2rem; /* 32px — Semantic/Heading 2 */
+  --text-h2--line-height: 2.24rem; /* 35.84px */
+  --text-h2--letter-spacing: -0.03rem; /* -0.48px */
+
+  --text-stat: 1.625rem; /* 26px — stat numbers ("32 mil", "148") */
+  --text-stat--line-height: 1.625rem;
+
+  --text-body: 1rem; /* 16px — sidebar paragraph */
+  --text-body--line-height: 1.5rem; /* 24px */
+
+  --text-label: 0.75rem; /* 12px — Semantic/Label (form field labels) */
+  --text-label--line-height: 1.1625rem; /* 18.6px */
+
+  --text-caption: 0.6875rem; /* 11px — uppercase stat captions */
+  --text-caption--line-height: 1.0625rem; /* 17px */
+  --text-caption--letter-spacing: 0.06875rem; /* 1.1px */
+}

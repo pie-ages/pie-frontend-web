@@ -1,0 +1,40 @@
+@import '../design-system/tokens.css';
+
+:root {
+  --background: #ffffff;
+  --foreground: #201e1d;
+  --primary: #661414;
+  --primary-foreground: #f3f2f2;
+  --muted: #f8f4f4;
+  --muted-foreground: rgba(32, 30, 29, 0.38);
+  --input: rgba(32, 30, 29, 0.4);
+  --destructive: #dc2626;
+  --ring: #a1a1aa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  display: flex;
+  flex-direction: column;
+  font-family:
+    var(--font-archivo),
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    Helvetica,
+    Arial,
+    sans-serif;
+}
