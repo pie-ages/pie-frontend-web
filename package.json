@@ -7,11 +7,20 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "prepare": "husky",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@types/node": "26.4.0",
     "@types/react": "19.2.18",
-    "typescript": "7.0.2"
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.3.4",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.4.1",
+    "prettier": "^3.9.6",
+    "typescript": "^6.0.3"
   }
 }
