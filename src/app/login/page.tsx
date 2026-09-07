@@ -16,7 +16,7 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       toast.error('Por favor, preencha todos os campos.', { id: 'login-error' });
       return;
@@ -32,15 +32,15 @@ export default function LoginPage() {
 
     setTimeout(() => {
       setIsLoading(false);
-      
+
       if (email !== 'teste@ages.com.br' || password !== '123456') {
         toast.error('E-mail ou senha inválidos.', { id: 'login-error' });
         return;
       }
-      
+
       toast.success('Login realizado com sucesso!');
       router.push('/dashboard');
-    }, 1500); 
+    }, 1500);
   };
 
   return (
@@ -52,9 +52,14 @@ export default function LoginPage() {
           </h1>
         </div>
         <div>
-          <h2 className={styles.mainHeading}>Sua loja dentro<br />do closet de clientes.</h2>
+          <h2 className={styles.mainHeading}>
+            Sua loja dentro
+            <br />
+            do closet de clientes.
+          </h2>
           <p className={styles.description}>
-            Cadastre seus produtos uma vez. Piê recomenda cada peça para as clientes cujo estilo e colorimetria combinam com ela.
+            Cadastre seus produtos uma vez. Piê recomenda cada peça para as clientes cujo estilo e
+            colorimetria combinam com ela.
           </p>
         </div>
         <div className={styles.statsContainer}>
@@ -116,14 +121,10 @@ export default function LoginPage() {
             </div>
 
             <div className={styles.buttonGroup}>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={styles.primaryBtn}
-              >
+              <button type="submit" disabled={isLoading} className={styles.primaryBtn}>
                 {isLoading ? 'Carregando...' : 'Entrar no painel'}
               </button>
-              
+
               <button
                 type="button"
                 onClick={() => router.push('/cadastro')}
@@ -136,7 +137,10 @@ export default function LoginPage() {
           </form>
 
           <div className={styles.footerText}>
-            Esqueceu a senha? <a href="/recuperar-senha" className={styles.link}>Recuperar acesso</a>
+            Esqueceu a senha?{' '}
+            <a href="/recuperar-senha" className={styles.link}>
+              Recuperar acesso
+            </a>
           </div>
         </div>
       </div>
