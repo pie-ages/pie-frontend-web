@@ -1,0 +1,33 @@
+.paginacao {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.indicador {
+  font-size: 0.8125rem;
+  color: #6b7280;
+}
+
+.botao {
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #5e1914;
+  background-color: #fae8e3;
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.botao:hover:not(:disabled) {
+  background-color: #f5d9d1;
+}
+
+.botao:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

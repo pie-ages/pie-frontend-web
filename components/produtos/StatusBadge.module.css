@@ -1,0 +1,22 @@
+.badge {
+  display: inline-block;
+  padding: 0.1875rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.publicado {
+  background-color: #fae8e3;
+  color: #5e1914;
+}
+
+.rascunho,
+.pausado {
+  background-color: transparent;
+  border-color: #d1d5db;
+  color: #6b7280;
+}
