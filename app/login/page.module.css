@@ -6,8 +6,8 @@
 .leftPanel {
   display: none;
   width: 50%;
-  background-color: #5e1914;
-  color: white;
+  background-color: var(--color-background-brand);
+  color: var(--color-text-inverse);
   padding: 3rem;
   flex-direction: column;
   justify-content: space-between;
@@ -26,7 +26,7 @@
 
 .brandSubtitle {
   font-weight: normal;
-  color: #d1d5db;
+  color: var(--color-text-inverse-subtle);
 }
 
 .mainHeading {
@@ -39,13 +39,13 @@
 .description {
   max-width: 28rem;
   font-size: 0.875rem;
-  color: #e5e7eb;
+  color: var(--color-text-inverse-muted);
 }
 
 .statsContainer {
   display: flex;
   gap: 3rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  border-top: 1px solid var(--color-border-divider-inverse);
   padding-top: 1.5rem;
 }
 
@@ -58,7 +58,7 @@
 
 .statLabel {
   font-size: 0.75rem;
-  color: #d1d5db;
+  color: var(--color-text-inverse-subtle);
   margin: 0;
   margin-top: 0.25rem;
 }
@@ -68,7 +68,7 @@
   width: 100%;
   align-items: center;
   justify-content: center;
-  background-color: white;
+  background-color: var(--color-background-default);
   padding: 2rem;
 }
 
@@ -86,13 +86,13 @@
 .formTitle {
   font-size: 1.875rem;
   font-weight: bold;
-  color: #111827;
+  color: var(--color-text-primary);
   margin-bottom: 0.5rem;
 }
 
 .formSubtitle {
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   margin-top: 0.25rem;
   margin-bottom: 2rem;
 }
@@ -106,7 +106,7 @@
 .label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--color-text-secondary);
   margin-bottom: 0.25rem;
 }
 
@@ -116,7 +116,7 @@
 
 .input {
   width: 100%;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--color-border-default);
   border-radius: 2px;
   padding: 0.5rem;
   padding-right: 5rem;
@@ -125,13 +125,13 @@
 }
 
 .input:focus {
-  border-color: #5e1914;
+  border-color: var(--color-border-focus);
   outline: none;
 }
 
 .input:disabled {
   opacity: 0.7;
-  background-color: #f3f4f6;
+  background-color: var(--color-background-subtle);
 }
 
 .input::-ms-reveal,
@@ -145,19 +145,19 @@
   right: 0.75rem;
   top: 0.5rem;
   font-size: 0.75rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   background: none;
   border: none;
   cursor: pointer;
 }
 
 .togglePasswordBtn:hover {
-  color: #374151;
+  color: var(--color-text-secondary);
 }
 
 .errorText {
   font-size: 0.875rem;
-  color: #dc2626;
+  color: var(--color-state-error);
   margin-bottom: 0.5rem;
 }
 
@@ -170,8 +170,8 @@
 
 .primaryBtn {
   width: 100%;
-  background-color: #5e1914;
-  color: white;
+  background-color: var(--color-brand-primary);
+  color: var(--color-text-inverse);
   padding: 0.75rem;
   font-size: 0.875rem;
   font-weight: bold;
@@ -181,7 +181,7 @@
 }
 
 .primaryBtn:hover:not(:disabled) {
-  background-color: #4a1410;
+  background-color: var(--color-brand-primary-hover);
 }
 
 .primaryBtn:disabled {
@@ -191,8 +191,8 @@
 
 .secondaryBtn {
   width: 100%;
-  background-color: #fae8e3;
-  color: #5e1914;
+  background-color: var(--color-brand-primary-light);
+  color: var(--color-brand-primary);
   padding: 0.75rem;
   font-size: 0.875rem;
   font-weight: bold;
@@ -202,17 +202,17 @@
 }
 
 .secondaryBtn:hover:not(:disabled) {
-  background-color: #f5d9d1;
+  background-color: var(--color-brand-primary-light-hover);
 }
 
 .footerText {
   margin-top: 1.5rem;
   font-size: 0.875rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
 }
 
 .link {
   font-weight: 600;
-  color: #5e1914;
+  color: var(--color-brand-primary);
   text-decoration: underline;
 }
