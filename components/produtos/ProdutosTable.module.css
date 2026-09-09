@@ -1,6 +1,5 @@
 .wrapper {
   overflow-x: auto;
-  border: 1px solid #e5e7eb;
 }
 
 .table {
@@ -12,34 +11,39 @@
 .th {
   text-align: left;
   padding: 0.75rem 1rem;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
-  color: #6b7280;
-  background-color: #f9fafb;
+  color: #374151;
   border-bottom: 1px solid #e5e7eb;
   white-space: nowrap;
 }
 
 .row:not(:last-child) .td {
-  border-bottom: 1px solid #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .td {
   padding: 0.75rem 1rem;
+  font-weight: 600;
   color: #374151;
   vertical-align: middle;
   white-space: nowrap;
+}
+
+.textoNormal {
+  font-weight: 400;
 }
 
 .chipEstilo {
   display: inline-block;
   padding: 0.125rem 0.5rem;
   font-size: 0.8125rem;
+  font-weight: 400;
   color: #374151;
-  border: 1px solid #d1d5db;
-  border-radius: 2px;
+  border: 1px solid #e5e7eb;
+  border-radius: 4px;
 }
 
 .foto {
@@ -59,5 +63,6 @@
   display: block;
   margin-top: 0.125rem;
   font-size: 0.75rem;
+  font-weight: 400;
   color: #9ca3af;
 }

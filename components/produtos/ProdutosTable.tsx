@@ -42,7 +42,7 @@ export function ProdutosTable({ produtos }: ProdutosTableProps) {
                 <span className={styles.chipEstilo}>{produto.estilo}</span>
               </td>
               <td className={styles.td}>{produto.cor}</td>
-              <td className={styles.td}>{produto.tamanhos.join(' ')}</td>
+              <td className={`${styles.td} ${styles.textoNormal}`}>{produto.tamanhos.join(' ')}</td>
               <td className={styles.td}>{formatadorPreco.format(produto.preco)}</td>
               <td className={styles.td}>
                 <StatusBadge status={produto.status} />
