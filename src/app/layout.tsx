@@ -1,4 +1,4 @@
-import './styles/colors.css';
+import '../styles/colors.css';
 import { Toaster } from 'sonner';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
