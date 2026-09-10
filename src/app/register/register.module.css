@@ -1,0 +1,35 @@
+.formWrapper {
+  width: 100%;
+  max-width: 32rem; /* Um pouco mais largo que o login por causa das 2 colunas */
+}
+
+/* A mágica das duas colunas */
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .formGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.togglePasswordBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  padding: 0;
+}
+
+.togglePasswordBtn:hover {
+  color: #374151;
+}
