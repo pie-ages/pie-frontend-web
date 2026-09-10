@@ -1,0 +1,80 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.leftPanel {
+  display: none;
+  width: 50%;
+  background-color: #5e1914;
+  color: white;
+  padding: 3rem;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+@media (min-width: 768px) {
+  .leftPanel {
+    display: flex;
+  }
+}
+
+.brandTitle {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.brandSubtitle {
+  font-weight: normal;
+  color: #d1d5db;
+}
+
+.mainHeading {
+  font-size: 3rem;
+  font-weight: bold;
+  line-height: 1.1;
+  margin-bottom: 1rem;
+}
+
+.description {
+  max-width: 28rem;
+  font-size: 0.875rem;
+  color: #e5e7eb;
+}
+
+.statsContainer {
+  display: flex;
+  gap: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding-top: 1.5rem;
+}
+
+.statNumber {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.statLabel {
+  font-size: 0.75rem;
+  color: #d1d5db;
+  margin: 0;
+  margin-top: 0.25rem;
+}
+
+.rightPanel {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 2rem;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .rightPanel {
+    width: 50%;
+  }
+}
