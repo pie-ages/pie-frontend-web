@@ -4,26 +4,41 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
-import styles from '@/app/login/login.module.css';
+
+import AuthLayout from '@/components/layout/AuthLayout';
+import FormHeader from '@/components/ui/FormHeader';
+import Input from '@/components/ui/Input';
+import Button from '@/components/ui/Button';
+import FormFooterLink from '@/components/ui/FormFooterLink';
+
+import styles from './login.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [formData, setFormData] = useState({
+    email: '',
+    senha: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    toast.dismiss('login-error');
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password) {
+    if (!formData.email || !formData.senha) {
       toast.error('Por favor, preencha todos os campos.', { id: 'login-error' });
       return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!emailRegex.test(formData.email)) {
       toast.error('Insira um formato de e-mail válido.', { id: 'login-error' });
       return;
     }
@@ -31,119 +46,85 @@ export default function LoginPage() {
     setIsLoading(true);
 
     setTimeout(() => {
+      console.log('Payload da API (Login):', formData);
       setIsLoading(false);
 
-      if (email !== 'teste@ages.com.br' || password !== '123456') {
+      if (formData.email !== 'teste@ages.com.br' || formData.senha !== '123456') {
         toast.error('E-mail ou senha inválidos.', { id: 'login-error' });
         return;
       }
 
       toast.success('Login realizado com sucesso!');
+
       router.push('/dashboard');
-    }, 1500);
+    }, 2000);
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.leftPanel}>
-        <div>
-          <h1 className={styles.brandTitle}>
-            Piê <span className={styles.brandSubtitle}>/ para lojas</span>
-          </h1>
-        </div>
-        <div>
-          <h2 className={styles.mainHeading}>
-            Sua loja dentro
-            <br />
-            do closet de clientes.
-          </h2>
-          <p className={styles.description}>
-            Cadastre seus produtos uma vez. Piê recomenda cada peça para as clientes cujo estilo e
-            colorimetria combinam com ela.
-          </p>
-        </div>
-        <div className={styles.statsContainer}>
-          <div>
-            <p className={styles.statNumber}>32 mil</p>
-            <p className={styles.statLabel}>PEÇAS NA VITRINE</p>
-          </div>
-          <div>
-            <p className={styles.statNumber}>148</p>
-            <p className={styles.statLabel}>LOJAS ATIVAS</p>
-          </div>
-        </div>
-      </div>
+    <AuthLayout>
+      <div className={styles.formWrapper}>
+        <FormHeader
+          title="Acessar o painel"
+          subtitle="Use o e-mail cadastrado no pedido da sua loja."
+        />
 
-      <div className={styles.rightPanel}>
-        <div className={styles.formWrapper}>
-          <h2 className={styles.formTitle}>Acessar o painel</h2>
-          <p className={styles.formSubtitle}>Use o e-mail cadastrado no pedido da sua loja.</p>
+        <form onSubmit={handleLogin} className={styles.formGrid} noValidate>
+          <Input
+            label="E-mail"
+            name="email"
+            type="email"
+            placeholder="contato@suamarca.com.br"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={isLoading}
+            required
+            className={styles.fullWidth}
+          />
 
-          <form onSubmit={handleLogin}>
-            <div className={styles.formGroup}>
-              <label className={styles.label}>E-mail</label>
-              <input
-                type="email"
-                placeholder="Digite seu e-mail de acesso"
-                className={styles.input}
-                value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                  toast.dismiss('login-error');
-                }}
-                disabled={isLoading}
-              />
-            </div>
-
-            <div className={styles.formGroup}>
-              <label className={styles.label}>Senha</label>
-              <div className={styles.inputContainer}>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Digite sua senha"
-                  className={styles.input}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    toast.dismiss('login-error');
-                  }}
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className={styles.togglePasswordBtn}
-                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
-              </div>
-            </div>
-
-            <div className={styles.buttonGroup}>
-              <button type="submit" disabled={isLoading} className={styles.primaryBtn}>
-                {isLoading ? 'Carregando...' : 'Entrar no painel'}
-              </button>
-
+          <Input
+            label="Senha"
+            name="senha"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="••••••••"
+            value={formData.senha}
+            onChange={handleChange}
+            disabled={isLoading}
+            required
+            className={styles.fullWidth}
+            rightElement={
               <button
                 type="button"
-                onClick={() => router.push('/cadastro')}
-                className={styles.secondaryBtn}
-                disabled={isLoading}
+                onClick={() => setShowPassword(!showPassword)}
+                className={styles.togglePasswordBtn}
+                aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
               >
-                Cadastrar loja
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
-            </div>
-          </form>
+            }
+          />
 
-          <div className={styles.footerText}>
-            Esqueceu a senha?{' '}
-            <a href="/recuperar-senha" className={styles.link}>
-              Recuperar acesso
-            </a>
+          <div className={styles.buttonGroup}>
+            <Button type="submit" disabled={isLoading} variant="primary">
+              {isLoading ? 'Acessando...' : 'Entrar no painel'}
+            </Button>
+
+            <Button
+              type="button"
+              onClick={() => router.push('/register')}
+              disabled={isLoading}
+              variant="secondary"
+            >
+              Cadastrar loja
+            </Button>
           </div>
-        </div>
+        </form>
+
+        <FormFooterLink
+          text="Esqueceu a senha?"
+          linkText="Recuperar acesso"
+          href="/esqueci-senha"
+        />
       </div>
-    </div>
+    </AuthLayout>
   );
 }

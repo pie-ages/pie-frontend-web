@@ -1,4 +1,4 @@
-.container {
+.formWrapper {
   display: flex;
   min-height: 100vh;
 }
@@ -80,7 +80,7 @@
 
 .formWrapper {
   width: 100%;
-  max-width: 28rem;
+  max-width: 27.5rem;
 }
 
 .formTitle {
@@ -114,7 +114,7 @@
   position: relative;
 }
 
-.input {
+.fullWidth {
   width: 100%;
   border: 1px solid var(--color-border-default);
   border-radius: 2px;

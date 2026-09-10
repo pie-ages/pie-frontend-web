@@ -1,16 +1,15 @@
 .formWrapper {
   width: 100%;
-  max-width: 32rem; /* Um pouco mais largo que o login por causa das 2 colunas */
+  max-width: 32rem;
 }
 
-/* A mágica das duas colunas */
 .formGrid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 40rem) {
   .formGrid {
     grid-template-columns: 1fr 1fr;
   }
