@@ -1,0 +1,131 @@
+.topbar {
+  background-color: var(--color-background-subtle);
+  border-bottom: 1px solid var(--color-border-default);
+}
+
+.inner {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  max-width: 1200px;
+  height: 64px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.brand {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logoMark {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  background-color: var(--color-brand-primary);
+}
+
+.logoText {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.logoSubtitle {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  height: 100%;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  border-bottom: 4px solid transparent;
+}
+
+.navItemActive {
+  color: var(--color-text-primary);
+  border-bottom-color: var(--color-brand-primary);
+}
+
+.account {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.avatar {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background-color: var(--color-brand-primary);
+  color: var(--color-text-inverse);
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.accountInfo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.accountName {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.accountEmail {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.signOutButton {
+  padding: 0.375rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.signOutButton:hover {
+  background-color: var(--color-background-default);
+  opacity: 0.85;
+}
+
+@media (max-width: 640px) {
+  .inner {
+    flex-wrap: wrap;
+    height: auto;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+  }
+
+  .account {
+    margin-left: 0;
+  }
+}

@@ -9,14 +9,14 @@
   text-transform: uppercase;
 }
 
-.publicado {
-  background-color: #fae8e3;
-  color: #5e1914;
+.published {
+  background-color: var(--color-brand-primary-light);
+  color: var(--color-brand-primary);
 }
 
-.rascunho,
-.pausado {
+.draft,
+.paused {
   background-color: transparent;
-  border-color: #d1d5db;
-  color: #6b7280;
+  border-color: var(--color-border-default);
+  color: var(--color-text-muted);
 }

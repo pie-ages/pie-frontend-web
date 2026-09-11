@@ -1,115 +1,127 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import type { FiltrosProdutos, Produto } from '../../types/produto';
-import { getProdutos } from '../../lib/produtos/produtos.service';
-import {
-  FILTROS_VAZIOS,
-  filtrarProdutos,
-  valoresUnicos,
-} from '../../lib/produtos/produtos.filtros';
-import { ProdutosFiltros } from '../../components/produtos/ProdutosFiltros';
-import { ProdutosTable } from '../../components/produtos/ProdutosTable';
-import { ProdutosPaginacao } from '../../components/produtos/ProdutosPaginacao';
+import type { Product, ProductFilters } from '@/types/products';
+import { getProducts } from '@/lib/products/products.service';
+import { EMPTY_FILTERS, filterProducts, uniqueValues } from '@/lib/products/products.filters';
+import { ProductsMetrics } from '@/components/products/ProductsMetrics';
+import { ProductsFilter } from '@/components/products/ProductsFilter';
+import { ProductsTable } from '@/components/products/ProductsTable';
+import { ProductsPagination } from '@/components/products/ProductsPagination';
+import { StoreHeader } from '@/components/layout/StoreHeader';
 import styles from './page.module.css';
 
-type Status = 'carregando' | 'erro' | 'pronto';
+type Status = 'loading' | 'error' | 'ready';
 
-const PRODUTOS_POR_PAGINA = 5;
+const PRODUCTS_PER_PAGE = 5;
 
-export default function ProdutosPage() {
-  const [status, setStatus] = useState<Status>('carregando');
-  const [produtos, setProdutos] = useState<Produto[]>([]);
-  const [filtros, setFiltros] = useState<FiltrosProdutos>(FILTROS_VAZIOS);
-  const [paginaAtual, setPaginaAtual] = useState(1);
+export default function ProductsPage() {
+  const [status, setStatus] = useState<Status>('loading');
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filters, setFilters] = useState<ProductFilters>(EMPTY_FILTERS);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    let ativo = true;
+    let active = true;
 
-    getProdutos()
-      .then((lista) => {
-        if (!ativo) return;
-        setProdutos(lista);
-        setStatus('pronto');
+    getProducts()
+      .then((list) => {
+        if (!active) return;
+        setProducts(list);
+        setStatus('ready');
       })
       .catch(() => {
-        if (!ativo) return;
-        setStatus('erro');
+        if (!active) return;
+        setStatus('error');
       });
 
     return () => {
-      ativo = false;
+      active = false;
     };
   }, []);
 
-  const estilos = useMemo(() => valoresUnicos(produtos, 'estilo'), [produtos]);
-  const pecas = useMemo(() => valoresUnicos(produtos, 'peca'), [produtos]);
-  const produtosFiltrados = useMemo(() => filtrarProdutos(produtos, filtros), [produtos, filtros]);
+  const styleOptions = useMemo(() => uniqueValues(products, 'style'), [products]);
+  const pieceOptions = useMemo(() => uniqueValues(products, 'piece'), [products]);
+  const filteredProducts = useMemo(() => filterProducts(products, filters), [products, filters]);
 
-  const totalPaginas = Math.max(1, Math.ceil(produtosFiltrados.length / PRODUTOS_POR_PAGINA));
-  const paginaSegura = Math.min(paginaAtual, totalPaginas);
-  const inicio = (paginaSegura - 1) * PRODUTOS_POR_PAGINA;
-  const produtosPagina = produtosFiltrados.slice(inicio, inicio + PRODUTOS_POR_PAGINA);
-  const totalTexto = `${produtosFiltrados.length} de ${produtos.length} produtos`;
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
+  const startIndex = (safePage - 1) * PRODUCTS_PER_PAGE;
+  const pageProducts = filteredProducts.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+  const resultsLabel = `${filteredProducts.length} de ${products.length} produtos`;
 
-  const aplicarFiltros = (novosFiltros: FiltrosProdutos) => {
-    setFiltros(novosFiltros);
-    setPaginaAtual(1);
+  const applyFilters = (newFilters: ProductFilters) => {
+    setFilters(newFilters);
+    setCurrentPage(1);
   };
 
-  const mudarPagina = (pagina: number) => {
-    setPaginaAtual(Math.min(Math.max(pagina, 1), totalPaginas));
+  const changePage = (page: number) => {
+    setCurrentPage(Math.min(Math.max(page, 1), totalPages));
   };
 
   return (
     <div className={styles.page}>
+      <StoreHeader />
       <main className={styles.container}>
         <header className={styles.header}>
-          <h1 className={styles.titulo}>Produtos</h1>
+          <div>
+            <p className={styles.pretitle}>Ateliê Nove</p>
+            <h1 className={styles.title}>Produtos</h1>
+          </div>
+          <div className={styles.actions}>
+            <button type="button" className={styles.secondaryButton}>
+              Importar CSV
+            </button>
+            <button type="button" className={styles.primaryButton}>
+              Novo produto
+            </button>
+          </div>
         </header>
 
-        {status === 'carregando' && <p className={styles.aviso}>Carregando produtos…</p>}
+        {status === 'loading' && <p className={styles.notice}>Carregando produtos…</p>}
 
-        {status === 'erro' && (
-          <p className={`${styles.aviso} ${styles.avisoErro}`}>
+        {status === 'error' && (
+          <p className={`${styles.notice} ${styles.noticeError}`}>
             Não foi possível carregar os produtos. Tente novamente mais tarde.
           </p>
         )}
 
-        {status === 'pronto' && (
+        {status === 'ready' && (
           <>
-            <ProdutosFiltros
-              filtros={filtros}
-              estilos={estilos}
-              pecas={pecas}
-              totalTexto={totalTexto}
-              onFiltrosChange={aplicarFiltros}
+            <ProductsMetrics />
+
+            <ProductsFilter
+              filters={filters}
+              styleOptions={styleOptions}
+              pieceOptions={pieceOptions}
+              resultsLabel={resultsLabel}
+              onFiltersChange={applyFilters}
             />
 
-            {produtos.length === 0 && (
-              <p className={styles.aviso}>Nenhum produto cadastrado ainda.</p>
+            {products.length === 0 && (
+              <p className={styles.notice}>Nenhum produto cadastrado ainda.</p>
             )}
 
-            {produtos.length > 0 && produtosFiltrados.length === 0 && (
-              <div className={styles.semResultado}>
+            {products.length > 0 && filteredProducts.length === 0 && (
+              <div className={styles.emptyState}>
                 <p>Nenhum produto encontrado com esses filtros.</p>
                 <button
                   type="button"
-                  className={styles.limparFiltros}
-                  onClick={() => aplicarFiltros(FILTROS_VAZIOS)}
+                  className={styles.clearFilters}
+                  onClick={() => applyFilters(EMPTY_FILTERS)}
                 >
                   Limpar filtros
                 </button>
               </div>
             )}
 
-            {produtosFiltrados.length > 0 && (
+            {filteredProducts.length > 0 && (
               <>
-                <ProdutosTable produtos={produtosPagina} />
-                <ProdutosPaginacao
-                  paginaAtual={paginaSegura}
-                  totalPaginas={totalPaginas}
-                  onMudarPagina={mudarPagina}
+                <ProductsTable products={pageProducts} />
+                <ProductsPagination
+                  currentPage={safePage}
+                  totalPages={totalPages}
+                  onPageChange={changePage}
                 />
               </>
             )}

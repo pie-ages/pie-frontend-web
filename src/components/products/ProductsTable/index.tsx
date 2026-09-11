@@ -1,0 +1,56 @@
+import type { Product } from '@/types/products';
+import { StatusBadge } from '../StatusBadge';
+import styles from './styles.module.css';
+
+const priceFormatter = new Intl.NumberFormat('pt-BR', {
+  style: 'currency',
+  currency: 'BRL',
+});
+
+interface ProductsTableProps {
+  products: Product[];
+}
+
+export function ProductsTable({ products }: ProductsTableProps) {
+  return (
+    <div className={styles.wrapper}>
+      <table className={styles.table}>
+        <thead>
+          <tr>
+            <th className={styles.th}>Foto</th>
+            <th className={styles.th}>Produto</th>
+            <th className={styles.th}>Peça</th>
+            <th className={styles.th}>Estilo</th>
+            <th className={styles.th}>Cor</th>
+            <th className={styles.th}>Tamanhos</th>
+            <th className={styles.th}>Preço</th>
+            <th className={styles.th}>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.map((product) => (
+            <tr key={product.id} className={styles.row}>
+              <td className={styles.td}>
+                <div className={styles.photo} aria-hidden="true" />
+              </td>
+              <td className={styles.td}>
+                <span className={styles.name}>{product.name}</span>
+                <span className={styles.code}>{product.code}</span>
+              </td>
+              <td className={styles.td}>{product.piece}</td>
+              <td className={styles.td}>
+                <span className={styles.styleChip}>{product.style}</span>
+              </td>
+              <td className={styles.td}>{product.color}</td>
+              <td className={`${styles.td} ${styles.regularText}`}>{product.sizes.join(' ')}</td>
+              <td className={styles.td}>{priceFormatter.format(product.price)}</td>
+              <td className={styles.td}>
+                <StatusBadge status={product.status} />
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}

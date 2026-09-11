@@ -1,21 +1,21 @@
-export type ProdutoStatus = 'PUBLICADO' | 'RASCUNHO' | 'PAUSADO';
+export type ProductStatus = 'PUBLICADO' | 'RASCUNHO' | 'PAUSADO';
 
-export interface Produto {
+export interface Product {
   id: string;
-  fotoUrl: string | null;
-  nome: string;
-  codigo: string;
-  peca: string;
-  estilo: string;
-  cor: string;
-  tamanhos: string[];
-  preco: number;
-  status: ProdutoStatus;
+  photoUrl: string | null;
+  name: string;
+  code: string;
+  piece: string;
+  style: string;
+  color: string;
+  sizes: string[];
+  price: number;
+  status: ProductStatus;
 }
 
-export interface FiltrosProdutos {
-  busca: string;
-  estilo: string;
-  peca: string;
-  status: ProdutoStatus | '';
+export interface ProductFilters {
+  search: string;
+  style: string;
+  piece: string;
+  status: ProductStatus | '';
 }

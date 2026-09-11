@@ -1,4 +1,4 @@
-.barra {
+.bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -6,30 +6,30 @@
   margin-bottom: 1rem;
 }
 
-.buscaWrapper {
+.searchWrapper {
   position: relative;
   flex: 1 1 240px;
   min-width: 200px;
 }
 
-.buscaIcone {
+.searchIcon {
   position: absolute;
   top: 50%;
   left: 0.625rem;
   width: 16px;
   height: 16px;
   transform: translateY(-50%);
-  color: #9ca3af;
+  color: var(--color-text-muted);
   pointer-events: none;
 }
 
-.busca {
+.search {
   width: 100%;
   padding: 0.5rem 0.75rem 0.5rem 2rem;
   font-size: 0.875rem;
-  color: #374151;
-  background-color: #ffffff;
-  border: 1px solid #d1d5db;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-default);
+  border: 1px solid var(--color-border-default);
   border-radius: 2px;
   box-sizing: border-box;
 }
@@ -37,22 +37,22 @@
 .select {
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
-  color: #374151;
-  background-color: #ffffff;
-  border: 1px solid #d1d5db;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-default);
+  border: 1px solid var(--color-border-default);
   border-radius: 2px;
   cursor: pointer;
 }
 
-.contador {
+.counter {
   margin-left: auto;
   font-size: 0.8125rem;
-  color: #6b7280;
+  color: var(--color-text-muted);
   white-space: nowrap;
 }
 
-.busca:focus,
+.search:focus,
 .select:focus {
   outline: none;
-  border-color: #5e1914;
+  border-color: var(--color-border-focus);
 }
