@@ -1,4 +1,5 @@
 import type { Product } from '@/types/products';
+import { Copy, Pencil, Trash2 } from 'lucide-react';
 import { StatusBadge } from '../StatusBadge';
 import styles from './styles.module.css';
 
@@ -25,27 +26,56 @@ export function ProductsTable({ products }: ProductsTableProps) {
             <th className={styles.th}>Tamanhos</th>
             <th className={styles.th}>Preço</th>
             <th className={styles.th}>Status</th>
+            <th className={styles.th} />
           </tr>
         </thead>
         <tbody>
           {products.map((product) => (
             <tr key={product.id} className={styles.row}>
-              <td className={styles.td}>
+              <td className={`${styles.td} ${styles.photoCell}`}>
                 <div className={styles.photo} aria-hidden="true" />
               </td>
               <td className={styles.td}>
                 <span className={styles.name}>{product.name}</span>
                 <span className={styles.code}>{product.code}</span>
               </td>
-              <td className={styles.td}>{product.piece}</td>
+              <td className={`${styles.td} ${styles.softText}`}>{product.piece}</td>
               <td className={styles.td}>
                 <span className={styles.styleChip}>{product.style}</span>
               </td>
-              <td className={styles.td}>{product.color}</td>
+              <td className={`${styles.td} ${styles.softText}`}>{product.color}</td>
               <td className={`${styles.td} ${styles.regularText}`}>{product.sizes.join(' ')}</td>
               <td className={styles.td}>{priceFormatter.format(product.price)}</td>
               <td className={styles.td}>
                 <StatusBadge status={product.status} />
+              </td>
+              <td className={`${styles.td} ${styles.actionsCell}`}>
+                <div className={styles.actions}>
+                  <button
+                    type="button"
+                    className={styles.actionButton}
+                    aria-label="Editar produto"
+                    title="Editar"
+                  >
+                    <Pencil size={15} style={{ color: 'inherit' }} />
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.actionButton}
+                    aria-label="Duplicar produto"
+                    title="Duplicar"
+                  >
+                    <Copy size={15} style={{ color: 'inherit' }} />
+                  </button>
+                  <button
+                    type="button"
+                    className={`${styles.actionButton} ${styles.delete}`}
+                    aria-label="Excluir produto"
+                    title="Excluir"
+                  >
+                    <Trash2 size={15} style={{ color: 'inherit' }} />
+                  </button>
+                </div>
               </td>
             </tr>
           ))}

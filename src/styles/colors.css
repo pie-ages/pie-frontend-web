@@ -22,10 +22,11 @@
   /* Fundo */
   --color-background-default: #ffffff;
   --color-background-subtle: #f3f4f6;
+  --color-background-input: #f8f4f4;
   --color-background-brand: var(--color-brand-primary);
 
   /* Borda */
-  --color-border-default: #cba790;
+  --color-border-default: rgba(32, 30, 29, 0.4);
   --color-border-focus: var(--color-brand-primary);
   --color-border-divider-inverse: rgba(255, 255, 255, 0.2);
 

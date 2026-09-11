@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { ArrowUpFromLine, Plus } from 'lucide-react';
 import type { Product, ProductFilters } from '@/types/products';
 import { getProducts } from '@/lib/products/products.service';
 import { EMPTY_FILTERS, filterProducts, uniqueValues } from '@/lib/products/products.filters';
@@ -13,13 +14,14 @@ import styles from './page.module.css';
 
 type Status = 'loading' | 'error' | 'ready';
 
-const PRODUCTS_PER_PAGE = 5;
+const PER_PAGE_OPTIONS = [5, 10, 20];
 
 export default function ProductsPage() {
   const [status, setStatus] = useState<Status>('loading');
   const [products, setProducts] = useState<Product[]>([]);
   const [filters, setFilters] = useState<ProductFilters>(EMPTY_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
 
   useEffect(() => {
     let active = true;
@@ -44,11 +46,11 @@ export default function ProductsPage() {
   const pieceOptions = useMemo(() => uniqueValues(products, 'piece'), [products]);
   const filteredProducts = useMemo(() => filterProducts(products, filters), [products, filters]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / perPage));
   const safePage = Math.min(currentPage, totalPages);
-  const startIndex = (safePage - 1) * PRODUCTS_PER_PAGE;
-  const pageProducts = filteredProducts.slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
-  const resultsLabel = `${filteredProducts.length} de ${products.length} produtos`;
+  const startIndex = (safePage - 1) * perPage;
+  const pageProducts = filteredProducts.slice(startIndex, startIndex + perPage);
+  const resultsLabel = `${pageProducts.length} de ${products.length} produtos`;
 
   const applyFilters = (newFilters: ProductFilters) => {
     setFilters(newFilters);
@@ -70,9 +72,11 @@ export default function ProductsPage() {
           </div>
           <div className={styles.actions}>
             <button type="button" className={styles.secondaryButton}>
+              <ArrowUpFromLine size={16} style={{ color: 'inherit' }} />
               Importar CSV
             </button>
             <button type="button" className={styles.primaryButton}>
+              <Plus size={16} style={{ color: 'inherit' }} />
               Novo produto
             </button>
           </div>
@@ -116,14 +120,34 @@ export default function ProductsPage() {
             )}
 
             {filteredProducts.length > 0 && (
-              <>
+              <div className={styles.tableSection}>
                 <ProductsTable products={pageProducts} />
-                <ProductsPagination
-                  currentPage={safePage}
-                  totalPages={totalPages}
-                  onPageChange={changePage}
-                />
-              </>
+                <div className={styles.tableFooter}>
+                  <label className={styles.perPageLabel}>
+                    Exibindo
+                    <select
+                      className={styles.perPageSelect}
+                      value={perPage}
+                      onChange={(e) => {
+                        setPerPage(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                    >
+                      {PER_PAGE_OPTIONS.map((n) => (
+                        <option key={n} value={n}>
+                          {n}
+                        </option>
+                      ))}
+                    </select>
+                    por página
+                  </label>
+                  <ProductsPagination
+                    currentPage={safePage}
+                    totalPages={totalPages}
+                    onPageChange={changePage}
+                  />
+                </div>
+              </div>
             )}
           </>
         )}
