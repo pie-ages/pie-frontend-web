@@ -1,0 +1,34 @@
+.badge {
+  display: inline-block;
+  padding: 0.1875rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 17px;
+  letter-spacing: 0.66px;
+  text-transform: uppercase;
+}
+
+.published {
+  background-color: var(--color-brand-primary-light);
+  color: var(--color-brand-primary);
+}
+
+.draft {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  padding: 2px 9px 3px;
+  width: 90px;
+  background: #eae7e7;
+  border: none;
+  color: #000000;
+  box-sizing: border-box;
+}
+
+.paused {
+  background-color: transparent;
+  border-color: var(--color-border-default);
+  color: var(--color-text-muted);
+}
