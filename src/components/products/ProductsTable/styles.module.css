@@ -117,10 +117,10 @@
   display: block;
   margin-top: 0.125rem;
   font-family: 'SF Mono', ui-monospace, 'Cascadia Code', 'Fira Mono', monospace;
-  font-size: 10.7px;
+  font-size: 13px;
   font-weight: 400;
-  line-height: 17px;
-  color: rgba(32, 30, 29, 0.5);
+  line-height: 20.1px;
+  color: rgba(32, 30, 29, 0.55);
 }
 
 .actionsCell {
