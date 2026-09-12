@@ -14,8 +14,8 @@ export interface ProductFormValues {
   purchaseUrl: string;
   categoryId: string;
   colorId: string;
-  materialId: string;
-  styleIds: string[];
+  styleId: string;
+  sizeIds: string[];
   images: ProductImage[];
   status: ProductStatus;
 }

@@ -6,6 +6,6 @@ export interface TaxonomyTerm {
 export interface Taxonomy {
   categories: TaxonomyTerm[];
   colors: TaxonomyTerm[];
-  materials: TaxonomyTerm[];
   styles: TaxonomyTerm[];
+  sizes: TaxonomyTerm[];
 }

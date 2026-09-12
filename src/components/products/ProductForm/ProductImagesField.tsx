@@ -7,6 +7,7 @@ interface ProductImagesFieldProps {
   images: ProductImage[];
   onChange: (images: ProductImage[]) => void;
   error?: string;
+  hint?: string;
 }
 
 function createImageId(): string {
@@ -16,7 +17,7 @@ function createImageId(): string {
   return `img-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-export function ProductImagesField({ images, onChange, error }: ProductImagesFieldProps) {
+export function ProductImagesField({ images, onChange, error, hint }: ProductImagesFieldProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const primary = images.find((image) => image.isPrimary) ?? images[0] ?? null;
   const others = images.filter((image) => image.id !== primary?.id);
@@ -135,10 +136,7 @@ export function ProductImagesField({ images, onChange, error }: ProductImagesFie
         className={styles.hiddenInput}
       />
 
-      <p className={styles.photosHint}>
-        A imagem principal é a exibida na vitrine. Clique em uma miniatura para torná-la a
-        principal.
-      </p>
+      {hint && <p className={styles.photosHint}>{hint}</p>}
 
       {error && <span className={styles.errorMessage}>{error}</span>}
     </div>

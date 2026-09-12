@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { StoreHeader } from '@/components/layout/StoreHeader';
 import { ProductForm } from '@/components/products/ProductForm';
 import { EMPTY_PRODUCT_FORM_VALUES } from '@/lib/products/product-form.mock';
@@ -13,15 +13,15 @@ export default function NewProductPage() {
       <StoreHeader />
       <main className={styles.container}>
         <Link href="/products" className={styles.breadcrumb}>
-          <ArrowLeft size={14} style={{ color: 'inherit' }} />
+          <ChevronLeft size={16} />
           Voltar para produtos
         </Link>
 
         <div className={styles.header}>
           <h1 className={styles.title}>Novo produto</h1>
           <p className={styles.subtitle}>
-            Categoria, cor e material seguem a lista da taxonomia do Piê — é por eles que a peça
-            entra nas recomendações certas.
+            Estilo e cor seguem a lista fixa do Piê — é por eles que a peça entra nas <br />
+            recomendações certas.
           </p>
         </div>
 

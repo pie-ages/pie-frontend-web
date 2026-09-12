@@ -3,12 +3,13 @@ import styles from './Input.module.css';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
+  leftElement?: ReactNode;
   rightElement?: ReactNode;
   error?: string;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ label, required, rightElement, error, className = '', ...props }, ref) => {
+  ({ label, required, leftElement, rightElement, error, className = '', ...props }, ref) => {
     return (
       <div className={`${styles.formGroup} ${className}`}>
         {label && (
@@ -18,11 +19,12 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
         )}
 
         <div className={styles.inputContainer}>
+          {leftElement && <div className={styles.leftElementWrapper}>{leftElement}</div>}
           <input
             ref={ref}
             required={required}
             aria-invalid={Boolean(error)}
-            className={`${styles.input} ${rightElement ? styles.hasRightElement : ''} ${error ? styles.hasError : ''}`}
+            className={`${styles.input} ${leftElement ? styles.hasLeftElement : ''} ${rightElement ? styles.hasRightElement : ''} ${error ? styles.hasError : ''}`}
             {...props}
           />
 

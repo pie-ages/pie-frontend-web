@@ -64,23 +64,33 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
     setErrors((prev) => ({ ...prev, [key]: undefined }));
   };
 
-  const toggleStyle = (id: string) => {
+  const toggleSize = (id: string) => {
     setValues((prev) => ({
       ...prev,
-      styleIds: prev.styleIds.includes(id)
-        ? prev.styleIds.filter((styleId) => styleId !== id)
-        : [...prev.styleIds, id],
+      sizeIds: prev.sizeIds.includes(id)
+        ? prev.sizeIds.filter((sizeId) => sizeId !== id)
+        : [...prev.sizeIds, id],
     }));
-    setErrors((prev) => ({ ...prev, styleIds: undefined }));
+    setErrors((prev) => ({ ...prev, sizeIds: undefined }));
   };
 
   const submit = async (targetStatus: ProductStatus) => {
-    const formErrors = validateProductForm(values);
+    if (targetStatus === 'RASCUNHO') {
+      if (!values.name.trim()) {
+        setErrors({ name: 'Informe o nome do produto.' });
+        toast.error('Informe o nome do produto antes de salvar.', { id: 'product-form-error' });
+        return;
+      }
+    } else {
+      const formErrors = validateProductForm(values);
 
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
-      toast.error('Revise os campos destacados antes de continuar.', { id: 'product-form-error' });
-      return;
+      if (Object.keys(formErrors).length > 0) {
+        setErrors(formErrors);
+        toast.error('Revise os campos destacados antes de continuar.', {
+          id: 'product-form-error',
+        });
+        return;
+      }
     }
 
     const payload: ProductFormValues = {
@@ -120,6 +130,11 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
           images={values.images}
           onChange={(images) => updateField('images', images)}
           error={errors.images}
+          hint={
+            mode === 'create'
+              ? 'Fundo neutro e peça inteira no quadro. A primeira foto é a que aparece na Vitrine do app.'
+              : undefined
+          }
         />
 
         <div className={styles.fieldsColumn}>
@@ -143,13 +158,24 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
 
           <div className={styles.fieldsRow3}>
             <Select
-              label="Categoria"
+              label="Peça"
               value={values.categoryId}
               onChange={(event) => updateField('categoryId', event.target.value)}
               options={taxonomy?.categories.map((c) => ({ value: c.id, label: c.name })) ?? []}
               placeholder={taxonomyLoading ? 'Carregando...' : 'Selecione'}
               disabled={taxonomyLoading || taxonomyError}
               error={errors.categoryId}
+              required
+            />
+
+            <Select
+              label="Estilo"
+              value={values.styleId}
+              onChange={(event) => updateField('styleId', event.target.value)}
+              options={taxonomy?.styles.map((c) => ({ value: c.id, label: c.name })) ?? []}
+              placeholder={taxonomyLoading ? 'Carregando...' : 'Selecione'}
+              disabled={taxonomyLoading || taxonomyError}
+              error={errors.styleId}
               required
             />
 
@@ -163,43 +189,32 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
               error={errors.colorId}
               required
             />
-
-            <Select
-              label="Material"
-              value={values.materialId}
-              onChange={(event) => updateField('materialId', event.target.value)}
-              options={taxonomy?.materials.map((c) => ({ value: c.id, label: c.name })) ?? []}
-              placeholder={taxonomyLoading ? 'Carregando...' : 'Selecione'}
-              disabled={taxonomyLoading || taxonomyError}
-              error={errors.materialId}
-              required
-            />
           </div>
 
           <div className={styles.stylesGroup}>
             <span className={styles.stylesLabel}>
-              Estilos <span className={styles.requiredAsterisk}>*</span>
+              Tamanhos disponíveis <span className={styles.requiredAsterisk}>*</span>
             </span>
             <div className={styles.chipsRow}>
-              {taxonomyLoading && <span className={styles.mutedText}>Carregando estilos...</span>}
+              {taxonomyLoading && <span className={styles.mutedText}>Carregando tamanhos...</span>}
               {!taxonomyLoading &&
                 !taxonomyError &&
-                taxonomy?.styles.map((style) => {
-                  const selected = values.styleIds.includes(style.id);
+                taxonomy?.sizes.map((size) => {
+                  const selected = values.sizeIds.includes(size.id);
                   return (
                     <button
-                      key={style.id}
+                      key={size.id}
                       type="button"
                       className={`${styles.chip} ${selected ? styles.chipSelected : ''}`}
-                      onClick={() => toggleStyle(style.id)}
+                      onClick={() => toggleSize(size.id)}
                       aria-pressed={selected}
                     >
-                      {style.name}
+                      {size.name}
                     </button>
                   );
                 })}
             </div>
-            {errors.styleIds && <span className={styles.errorMessage}>{errors.styleIds}</span>}
+            {errors.sizeIds && <span className={styles.errorMessage}>{errors.sizeIds}</span>}
           </div>
 
           <div className={styles.fieldsRow2}>
@@ -207,8 +222,12 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
               label="Preço"
               placeholder="0,00"
               inputMode="decimal"
+              leftElement={<span>R$</span>}
               value={values.price}
-              onChange={(event) => updateField('price', event.target.value)}
+              onChange={(event) => {
+                const filtered = event.target.value.replace(/[^\d.,]/g, '');
+                updateField('price', filtered);
+              }}
               error={errors.price}
               required
             />
@@ -266,15 +285,17 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
                 disabled={submitting}
                 onClick={() => submit(values.status)}
               >
-                {submitting ? 'Salvando...' : 'Salvar alterações'}
+                {submitting && submittingStatus === values.status
+                  ? 'Salvando...'
+                  : 'Salvar alterações'}
               </button>
               <button
                 type="button"
                 className={styles.secondaryButton}
                 disabled={submitting}
-                onClick={() => router.push('/products')}
+                onClick={() => submit('PAUSADO')}
               >
-                Cancelar
+                {submitting && submittingStatus === 'PAUSADO' ? 'Pausando...' : 'Pausar na Vitrine'}
               </button>
             </>
           )}
@@ -282,6 +303,12 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
 
         {mode === 'create' && (
           <span className={styles.helperText}>A peça aparece na Vitrine em até 5 minutos.</span>
+        )}
+
+        {mode === 'edit' && (
+          <button type="button" className={styles.deleteButton} disabled={submitting}>
+            Excluir produto
+          </button>
         )}
       </div>
     </form>

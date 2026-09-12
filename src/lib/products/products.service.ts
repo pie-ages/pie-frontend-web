@@ -12,6 +12,8 @@ export async function getProducts(): Promise<Product[]> {
 
 export interface ProductFormData {
   code: string;
+  updatedAt: string;
+  savedCount: number;
   values: ProductFormValues;
 }
 
@@ -23,12 +25,22 @@ export async function getProductFormData(id: string): Promise<ProductFormData | 
 export async function createProduct(values: ProductFormValues): Promise<{ id: string }> {
   await new Promise((resolve) => setTimeout(resolve, SIMULATED_LATENCY_MS));
   const id = `AN-${Math.floor(1000 + Math.random() * 9000)}`;
-  MOCK_PRODUCT_FORM_DETAILS[id] = { code: id, values };
+  MOCK_PRODUCT_FORM_DETAILS[id] = {
+    code: id,
+    updatedAt: new Date().toISOString(),
+    savedCount: 0,
+    values,
+  };
   return { id };
 }
 
 export async function updateProduct(id: string, values: ProductFormValues): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, SIMULATED_LATENCY_MS));
   const existing = MOCK_PRODUCT_FORM_DETAILS[id];
-  MOCK_PRODUCT_FORM_DETAILS[id] = { code: existing?.code ?? id, values };
+  MOCK_PRODUCT_FORM_DETAILS[id] = {
+    code: existing?.code ?? id,
+    updatedAt: new Date().toISOString(),
+    savedCount: existing?.savedCount ?? 0,
+    values,
+  };
 }

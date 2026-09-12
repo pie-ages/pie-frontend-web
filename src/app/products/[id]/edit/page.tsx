@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
+import { ChevronLeft } from 'lucide-react';
 import { StoreHeader } from '@/components/layout/StoreHeader';
 import { StatusBadge } from '@/components/products/StatusBadge';
 import { ProductForm } from '@/components/products/ProductForm';
@@ -21,7 +21,7 @@ export default function EditProductPage() {
       <StoreHeader />
       <main className={styles.container}>
         <Link href="/products" className={styles.breadcrumb}>
-          <ArrowLeft size={14} style={{ color: 'inherit' }} />
+          <ChevronLeft size={16} />
           Voltar para produtos
         </Link>
 
@@ -29,6 +29,18 @@ export default function EditProductPage() {
       </main>
     </div>
   );
+}
+
+function formatRelativeTime(isoDate: string): string {
+  const diff = Date.now() - new Date(isoDate).getTime();
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+
+  if (days > 0) return `Editado há ${days} dia${days > 1 ? 's' : ''}`;
+  if (hours > 0) return `Editado há ${hours} hora${hours > 1 ? 's' : ''}`;
+  if (minutes > 0) return `Editado há ${minutes} minuto${minutes > 1 ? 's' : ''}`;
+  return 'Editado agora';
 }
 
 function EditProductContent({ id }: { id: string }) {
@@ -81,7 +93,17 @@ function EditProductContent({ id }: { id: string }) {
           <h1 className={styles.title}>{data.values.name}</h1>
           <StatusBadge status={data.values.status} />
         </div>
-        <p className={styles.meta}>{data.code}</p>
+        <p className={styles.meta}>
+          {data.code}
+          <span className={styles.metaSep}>·</span>
+          {formatRelativeTime(data.updatedAt)}
+          {data.savedCount > 0 && (
+            <>
+              <span className={styles.metaSep}>·</span>
+              {data.savedCount} clientes favoritaram esta peça
+            </>
+          )}
+        </p>
       </div>
 
       <ProductForm mode="edit" productId={id} initialValues={data.values} />

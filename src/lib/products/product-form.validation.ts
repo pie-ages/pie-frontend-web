@@ -51,12 +51,12 @@ export function validateProductForm(values: ProductFormValues): ProductFormError
     errors.colorId = 'Selecione uma cor.';
   }
 
-  if (!values.materialId) {
-    errors.materialId = 'Selecione um material.';
+  if (!values.styleId) {
+    errors.styleId = 'Selecione um estilo.';
   }
 
-  if (values.styleIds.length === 0) {
-    errors.styleIds = 'Selecione ao menos um estilo.';
+  if (values.sizeIds.length === 0) {
+    errors.sizeIds = 'Selecione ao menos um tamanho.';
   }
 
   if (values.images.length === 0) {

@@ -20,14 +20,16 @@ export const EMPTY_PRODUCT_FORM_VALUES: ProductFormValues = {
   purchaseUrl: '',
   categoryId: '',
   colorId: '',
-  materialId: '',
-  styleIds: [],
+  styleId: '',
+  sizeIds: [],
   images: [],
   status: 'RASCUNHO',
 };
 
 interface MockProductFormRecord {
   code: string;
+  updatedAt: string;
+  savedCount: number;
   values: ProductFormValues;
 }
 
@@ -43,8 +45,8 @@ function buildFormValuesFromProduct(product: Product): ProductFormValues {
     purchaseUrl: '',
     categoryId: findTermId(MOCK_TAXONOMY.categories, product.piece),
     colorId: findTermId(MOCK_TAXONOMY.colors, product.color),
-    materialId: MOCK_TAXONOMY.materials[0]?.id ?? '',
-    styleIds: [findTermId(MOCK_TAXONOMY.styles, product.style)].filter(Boolean),
+    styleId: findTermId(MOCK_TAXONOMY.styles, product.style),
+    sizeIds: product.sizes.map((s) => s.toLowerCase().replace(/\s/g, '')),
     images: [
       {
         id: `${product.id}-img-1`,
@@ -57,10 +59,26 @@ function buildFormValuesFromProduct(product: Product): ProductFormValues {
   };
 }
 
+const SAVED_COUNTS: Record<string, number> = {
+  'AN-1042': 412,
+  'AN-1039': 287,
+  'AN-1035': 193,
+  'AN-1031': 54,
+  'AN-1029': 318,
+  'AN-1024': 76,
+  'AN-1019': 521,
+  'AN-1014': 0,
+};
+
 const GENERATED_PRODUCT_FORM_DETAILS: Record<string, MockProductFormRecord> = Object.fromEntries(
   MOCK_PRODUCTS.map((product) => [
     product.id,
-    { code: product.id, values: buildFormValuesFromProduct(product) },
+    {
+      code: product.id,
+      updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+      savedCount: SAVED_COUNTS[product.id] ?? 0,
+      values: buildFormValuesFromProduct(product),
+    },
   ]),
 );
 
@@ -68,6 +86,8 @@ export const MOCK_PRODUCT_FORM_DETAILS: Record<string, MockProductFormRecord> = 
   ...GENERATED_PRODUCT_FORM_DETAILS,
   'AN-1042': {
     code: 'AN-1042',
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+    savedCount: SAVED_COUNTS['AN-1042'],
     values: {
       name: 'Vestido Midi Verde',
       description:
@@ -76,8 +96,8 @@ export const MOCK_PRODUCT_FORM_DETAILS: Record<string, MockProductFormRecord> = 
       purchaseUrl: 'https://atelienove.com.br/vestido-midi-verde',
       categoryId: 'vestido',
       colorId: 'verde',
-      materialId: 'algodao',
-      styleIds: ['romantico'],
+      styleId: 'romantico',
+      sizeIds: ['p', 'm', 'g'],
       images: [
         {
           id: 'img-1042-1',
