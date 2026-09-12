@@ -1,0 +1,330 @@
+.form {
+  display: flex;
+  flex-direction: column;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 480px) 1fr;
+  gap: 2.5rem;
+}
+
+/* Fotos */
+
+.photosSection {
+  display: flex;
+  flex-direction: column;
+}
+
+.sectionLabel {
+  margin: 0 0 0.75rem;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.mainPhoto {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.mainPhotoEmpty {
+  border-style: dashed;
+  cursor: pointer;
+}
+
+.mainPhotoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.emptyLabel {
+  max-width: 220px;
+  text-align: center;
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.photoTag {
+  position: absolute;
+  left: 0.625rem;
+  bottom: 0.625rem;
+  padding: 2px 8px;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 2px;
+}
+
+.removeMainButton {
+  position: absolute;
+  top: 0.625rem;
+  right: 0.625rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.removeMainButton:hover {
+  background-color: var(--color-background-subtle);
+}
+
+.thumbRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.thumb {
+  position: relative;
+  width: 96px;
+  aspect-ratio: 4 / 5;
+  padding: 0;
+  background-color: var(--color-background-subtle);
+  border: 1px solid var(--color-border-default);
+  border-radius: 2px;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.thumbImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.removeThumbButton {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-secondary);
+  background-color: rgba(255, 255, 255, 0.85);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.addTile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 96px;
+  aspect-ratio: 4 / 5;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  border: 1px dashed var(--color-border-default);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.addTile:hover {
+  background-color: var(--color-background-subtle);
+}
+
+.hiddenInput {
+  display: none;
+}
+
+.photosHint {
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* Campos */
+
+.fieldsColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.fieldsRow3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.fieldsRow2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.stylesGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stylesLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.requiredAsterisk {
+  color: #dc2626;
+  margin-left: 0.2rem;
+}
+
+.chipsRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.chip {
+  padding: 0.4rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.chip:hover {
+  background-color: var(--color-background-subtle);
+}
+
+.chipSelected,
+.chipSelected:hover {
+  color: var(--color-text-inverse);
+  background-color: var(--color-brand-primary);
+  border-color: var(--color-brand-primary);
+}
+
+.mutedText {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+.taxonomyError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.8125rem;
+  color: var(--color-state-error);
+  background-color: var(--color-brand-primary-light);
+  border-radius: 2px;
+}
+
+.retryButton {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: inherit;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.errorMessage {
+  font-size: 0.75rem;
+  color: var(--color-state-error);
+}
+
+/* Ações */
+
+.actionsBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--color-border-default);
+}
+
+.actionsGroup {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.primaryButton {
+  padding: 0.625rem 1.25rem;
+  font-size: 14px;
+  font-weight: 800;
+  color: #f3f2f2;
+  background-color: var(--color-brand-primary);
+  border: none;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.primaryButton:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.secondaryButton {
+  padding: 0.625rem 1.25rem;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--color-text-secondary);
+  background-color: var(--color-background-default);
+  border: 1px solid var(--color-border-default);
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.secondaryButton:hover:not(:disabled) {
+  background-color: var(--color-background-subtle);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.helperText {
+  font-size: 0.8125rem;
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .fieldsRow3,
+  .fieldsRow2 {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { ArrowUpFromLine, Plus } from 'lucide-react';
 import type { Product, ProductFilters } from '@/types/products';
 import { getProducts } from '@/lib/products/products.service';
@@ -75,10 +76,10 @@ export default function ProductsPage() {
               <ArrowUpFromLine size={16} style={{ color: 'inherit' }} />
               Importar CSV
             </button>
-            <button type="button" className={styles.primaryButton}>
+            <Link href="/products/new" className={styles.primaryButton}>
               <Plus size={16} style={{ color: 'inherit' }} />
               Novo produto
-            </button>
+            </Link>
           </div>
         </header>
 

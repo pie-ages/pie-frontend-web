@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import type { Product } from '@/types/products';
 import { Copy, Pencil, Trash2 } from 'lucide-react';
 import { StatusBadge } from '../StatusBadge';
@@ -51,14 +52,14 @@ export function ProductsTable({ products }: ProductsTableProps) {
               </td>
               <td className={`${styles.td} ${styles.actionsCell}`}>
                 <div className={styles.actions}>
-                  <button
-                    type="button"
+                  <Link
+                    href={`/products/${product.id}/edit`}
                     className={styles.actionButton}
                     aria-label="Editar produto"
                     title="Editar"
                   >
                     <Pencil size={15} style={{ color: 'inherit' }} />
-                  </button>
+                  </Link>
                   <button
                     type="button"
                     className={styles.actionButton}
