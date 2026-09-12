@@ -1,5 +1,5 @@
 import type { Product } from '@/types/products';
-import type { ProductFormValues } from '@/types/productForm';
+import type { ProductFormData, ProductFormValues } from '@/types/productForm';
 import type { TaxonomyTerm } from '@/types/taxonomy';
 import { MOCK_TAXONOMY } from '@/lib/taxonomy/taxonomy.mock';
 import { MOCK_PRODUCTS } from './products.mock';
@@ -12,26 +12,6 @@ const PLACEHOLDER_IMAGE =
       '#',
     ),
   );
-
-export const EMPTY_PRODUCT_FORM_VALUES: ProductFormValues = {
-  name: '',
-  description: '',
-  price: '',
-  purchaseUrl: '',
-  categoryId: '',
-  colorId: '',
-  styleId: '',
-  sizeIds: [],
-  images: [],
-  status: 'RASCUNHO',
-};
-
-interface MockProductFormRecord {
-  code: string;
-  updatedAt: string;
-  savedCount: number;
-  values: ProductFormValues;
-}
 
 function findTermId(terms: TaxonomyTerm[], name: string): string {
   return terms.find((term) => term.name.toLowerCase() === name.toLowerCase())?.id ?? '';
@@ -70,7 +50,7 @@ const SAVED_COUNTS: Record<string, number> = {
   'AN-1014': 0,
 };
 
-const GENERATED_PRODUCT_FORM_DETAILS: Record<string, MockProductFormRecord> = Object.fromEntries(
+const GENERATED_PRODUCT_FORM_DETAILS: Record<string, ProductFormData> = Object.fromEntries(
   MOCK_PRODUCTS.map((product) => [
     product.id,
     {
@@ -82,7 +62,7 @@ const GENERATED_PRODUCT_FORM_DETAILS: Record<string, MockProductFormRecord> = Ob
   ]),
 );
 
-export const MOCK_PRODUCT_FORM_DETAILS: Record<string, MockProductFormRecord> = {
+export const MOCK_PRODUCT_FORM_DETAILS: Record<string, ProductFormData> = {
   ...GENERATED_PRODUCT_FORM_DETAILS,
   'AN-1042': {
     code: 'AN-1042',

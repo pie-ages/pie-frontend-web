@@ -15,6 +15,10 @@ export function parsePrice(raw: string): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
+export function filterPriceInput(raw: string): string {
+  return raw.replace(/[^\d.,]/g, '');
+}
+
 export function isValidPurchaseUrl(value: string): boolean {
   return URL_PATTERN.test(value.trim());
 }
@@ -23,6 +27,14 @@ export function normalizePurchaseUrl(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return trimmed;
   return /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
+}
+
+export function validateDraftForm(values: ProductFormValues): ProductFormErrors {
+  const errors: ProductFormErrors = {};
+  if (!values.name.trim()) {
+    errors.name = 'Informe o nome do produto.';
+  }
+  return errors;
 }
 
 export function validateProductForm(values: ProductFormValues): ProductFormErrors {

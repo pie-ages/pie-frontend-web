@@ -64,6 +64,11 @@ export function ProductImagesField({ images, onChange, error, hint }: ProductIma
         onClick={() => {
           if (!primary) inputRef.current?.click();
         }}
+        onKeyDown={(event) => {
+          if (!primary && (event.key === 'Enter' || event.key === ' ')) {
+            inputRef.current?.click();
+          }
+        }}
         role={!primary ? 'button' : undefined}
         tabIndex={!primary ? 0 : undefined}
       >

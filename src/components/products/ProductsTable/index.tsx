@@ -58,7 +58,7 @@ export function ProductsTable({ products }: ProductsTableProps) {
                     aria-label="Editar produto"
                     title="Editar"
                   >
-                    <Pencil size={15} style={{ color: 'inherit' }} />
+                    <Pencil size={15} />
                   </Link>
                   <button
                     type="button"
@@ -66,7 +66,7 @@ export function ProductsTable({ products }: ProductsTableProps) {
                     aria-label="Duplicar produto"
                     title="Duplicar"
                   >
-                    <Copy size={15} style={{ color: 'inherit' }} />
+                    <Copy size={15} />
                   </button>
                   <button
                     type="button"
@@ -74,7 +74,7 @@ export function ProductsTable({ products }: ProductsTableProps) {
                     aria-label="Excluir produto"
                     title="Excluir"
                   >
-                    <Trash2 size={15} style={{ color: 'inherit' }} />
+                    <Trash2 size={15} />
                   </button>
                 </div>
               </td>

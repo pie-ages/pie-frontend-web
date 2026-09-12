@@ -1,5 +1,5 @@
 import type { Product } from '@/types/products';
-import type { ProductFormValues } from '@/types/productForm';
+import type { ProductFormData, ProductFormValues } from '@/types/productForm';
 import { MOCK_PRODUCTS } from './products.mock';
 import { MOCK_PRODUCT_FORM_DETAILS } from './product-form.mock';
 
@@ -10,12 +10,7 @@ export async function getProducts(): Promise<Product[]> {
   return MOCK_PRODUCTS;
 }
 
-export interface ProductFormData {
-  code: string;
-  updatedAt: string;
-  savedCount: number;
-  values: ProductFormValues;
-}
+export type { ProductFormData };
 
 export async function getProductFormData(id: string): Promise<ProductFormData | null> {
   await new Promise((resolve) => setTimeout(resolve, SIMULATED_LATENCY_MS));
@@ -37,10 +32,13 @@ export async function createProduct(values: ProductFormValues): Promise<{ id: st
 export async function updateProduct(id: string, values: ProductFormValues): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, SIMULATED_LATENCY_MS));
   const existing = MOCK_PRODUCT_FORM_DETAILS[id];
+  if (!existing) {
+    throw new Error(`Product ${id} not found`);
+  }
   MOCK_PRODUCT_FORM_DETAILS[id] = {
-    code: existing?.code ?? id,
+    code: existing.code,
     updatedAt: new Date().toISOString(),
-    savedCount: existing?.savedCount ?? 0,
+    savedCount: existing.savedCount,
     values,
   };
 }

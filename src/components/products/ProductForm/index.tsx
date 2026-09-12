@@ -8,7 +8,12 @@ import type { ProductFormErrors, ProductFormValues } from '@/types/productForm';
 import type { ProductStatus } from '@/types/products';
 import { getTaxonomy } from '@/lib/taxonomy/taxonomy.service';
 import { createProduct, updateProduct } from '@/lib/products/products.service';
-import { normalizePurchaseUrl, validateProductForm } from '@/lib/products/product-form.validation';
+import {
+  filterPriceInput,
+  normalizePurchaseUrl,
+  validateDraftForm,
+  validateProductForm,
+} from '@/lib/products/product-form.validation';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Textarea from '@/components/ui/Textarea';
@@ -75,22 +80,18 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
   };
 
   const submit = async (targetStatus: ProductStatus) => {
-    if (targetStatus === 'RASCUNHO') {
-      if (!values.name.trim()) {
-        setErrors({ name: 'Informe o nome do produto.' });
-        toast.error('Informe o nome do produto antes de salvar.', { id: 'product-form-error' });
-        return;
-      }
-    } else {
-      const formErrors = validateProductForm(values);
+    const formErrors =
+      targetStatus === 'RASCUNHO' ? validateDraftForm(values) : validateProductForm(values);
 
-      if (Object.keys(formErrors).length > 0) {
-        setErrors(formErrors);
-        toast.error('Revise os campos destacados antes de continuar.', {
-          id: 'product-form-error',
-        });
-        return;
-      }
+    if (Object.keys(formErrors).length > 0) {
+      setErrors(formErrors);
+      toast.error(
+        targetStatus === 'RASCUNHO'
+          ? 'Informe o nome do produto antes de salvar.'
+          : 'Revise os campos destacados antes de continuar.',
+        { id: 'product-form-error' },
+      );
+      return;
     }
 
     const payload: ProductFormValues = {
@@ -224,10 +225,7 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
               inputMode="decimal"
               leftElement={<span>R$</span>}
               value={values.price}
-              onChange={(event) => {
-                const filtered = event.target.value.replace(/[^\d.,]/g, '');
-                updateField('price', filtered);
-              }}
+              onChange={(event) => updateField('price', filterPriceInput(event.target.value))}
               error={errors.price}
               required
             />
@@ -306,7 +304,14 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
         )}
 
         {mode === 'edit' && (
-          <button type="button" className={styles.deleteButton} disabled={submitting}>
+          <button
+            type="button"
+            className={styles.deleteButton}
+            disabled={submitting}
+            onClick={() =>
+              toast.error('Funcionalidade em desenvolvimento.', { id: 'delete-product' })
+            }
+          >
             Excluir produto
           </button>
         )}
