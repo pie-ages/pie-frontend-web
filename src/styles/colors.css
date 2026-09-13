@@ -2,7 +2,7 @@
  * Paleta de cores do frontend web.
  * Fonte única de verdade para as cores usadas pelos componentes (via CSS Modules).
  * Alterar a identidade visual = alterar os valores aqui.
- * Espelha app/styles/colors.ts, usado quando a cor precisa existir em JS/TS.
+ * Espelha src/constants/Theme.ts no app mobile (pie-frontend).
  */
 
 :root {

@@ -5,6 +5,7 @@ import styles from './styles.module.css';
 const NAV_ITEMS = [
   { label: 'Produtos', redirect: '/products' },
   { label: 'Importar', redirect: '/import' },
+  { label: 'Solicitações', redirect: '/store-requests' },
 ];
 
 export function StoreHeader() {
