@@ -1,5 +1,5 @@
 import type { Product } from '@/types/products';
-import { Copy, Eye, EyeOff, Loader2, Pencil, Trash2 } from 'lucide-react';
+import { Copy, Loader2, Pause, Pencil, Play, Trash2 } from 'lucide-react';
 import { StatusBadge } from '../StatusBadge';
 import styles from './styles.module.css';
 
@@ -76,9 +76,9 @@ export function ProductsTable({
                           style={{ color: 'inherit' }}
                         />
                       ) : isAvailable ? (
-                        <EyeOff size={15} style={{ color: 'inherit' }} />
+                        <Pause size={15} style={{ color: 'inherit' }} />
                       ) : (
-                        <Eye size={15} style={{ color: 'inherit' }} />
+                        <Play size={15} style={{ color: 'inherit' }} />
                       )}
                     </button>
                     <button
