@@ -17,5 +17,6 @@ export interface ProductFilters {
   search: string;
   style: string;
   piece: string;
+  size: string;
   status: ProductStatus | '';
 }

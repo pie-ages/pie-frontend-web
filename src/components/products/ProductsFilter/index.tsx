@@ -1,4 +1,5 @@
 import type { ProductFilters, ProductStatus } from '@/types/products';
+import { SIZES_BY_PIECE } from '@/lib/products/products.filters';
 import styles from './styles.module.css';
 
 const STATUS_OPTIONS: { value: ProductStatus; label: string }[] = [
@@ -64,7 +65,7 @@ export function ProductsFilter({
         className={styles.select}
         aria-label="Filtrar por peça"
         value={filters.piece}
-        onChange={(event) => onFiltersChange({ ...filters, piece: event.target.value })}
+        onChange={(event) => onFiltersChange({ ...filters, piece: event.target.value, size: '' })}
       >
         <option value="">Todas as peças</option>
         {pieceOptions.map((piece) => (
@@ -73,6 +74,22 @@ export function ProductsFilter({
           </option>
         ))}
       </select>
+
+      {filters.piece !== '' && (
+        <select
+          className={styles.select}
+          aria-label="Filtrar por tamanho"
+          value={filters.size}
+          onChange={(event) => onFiltersChange({ ...filters, size: event.target.value })}
+        >
+          <option value="">Todos os tamanhos</option>
+          {(SIZES_BY_PIECE[filters.piece] ?? []).map((size) => (
+            <option key={size} value={size}>
+              {size}
+            </option>
+          ))}
+        </select>
+      )}
 
       <select
         className={styles.select}

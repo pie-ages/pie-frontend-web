@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import type { Taxonomy } from '@/types/taxonomy';
 import type { ProductFormErrors, ProductFormValues } from '@/types/productForm';
 import type { ProductStatus } from '@/types/products';
-import { getTaxonomy } from '@/lib/taxonomy/taxonomy.service';
+import { getTaxonomy, SIZES_BY_CATEGORY } from '@/lib/taxonomy/taxonomy.service';
 import { createProduct, updateProduct } from '@/lib/products/products.service';
 import {
   filterPriceInput,
@@ -161,7 +161,10 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
             <Select
               label="Peça"
               value={values.categoryId}
-              onChange={(event) => updateField('categoryId', event.target.value)}
+              onChange={(event) => {
+                setValues((prev) => ({ ...prev, categoryId: event.target.value, sizeIds: [] }));
+                setErrors((prev) => ({ ...prev, categoryId: undefined, sizeIds: undefined }));
+              }}
               options={taxonomy?.categories.map((c) => ({ value: c.id, label: c.name })) ?? []}
               placeholder={taxonomyLoading ? 'Carregando...' : 'Selecione'}
               disabled={taxonomyLoading || taxonomyError}
@@ -196,25 +199,38 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
             <span className={styles.stylesLabel}>
               Tamanhos disponíveis <span className={styles.requiredAsterisk}>*</span>
             </span>
-            <div className={styles.chipsRow}>
-              {taxonomyLoading && <span className={styles.mutedText}>Carregando tamanhos...</span>}
-              {!taxonomyLoading &&
-                !taxonomyError &&
-                taxonomy?.sizes.map((size) => {
-                  const selected = values.sizeIds.includes(size.id);
-                  return (
-                    <button
-                      key={size.id}
-                      type="button"
-                      className={`${styles.chip} ${selected ? styles.chipSelected : ''}`}
-                      onClick={() => toggleSize(size.id)}
-                      aria-pressed={selected}
-                    >
-                      {size.name}
-                    </button>
-                  );
-                })}
-            </div>
+            {!values.categoryId && (
+              <span className={styles.mutedText}>
+                Selecione uma peça para ver os tamanhos disponíveis.
+              </span>
+            )}
+            {values.categoryId && (
+              <div className={styles.chipsRow}>
+                {taxonomyLoading && (
+                  <span className={styles.mutedText}>Carregando tamanhos...</span>
+                )}
+                {!taxonomyLoading &&
+                  !taxonomyError &&
+                  taxonomy?.sizes
+                    .filter((size) =>
+                      (SIZES_BY_CATEGORY[values.categoryId] ?? []).includes(size.id),
+                    )
+                    .map((size) => {
+                      const selected = values.sizeIds.includes(size.id);
+                      return (
+                        <button
+                          key={size.id}
+                          type="button"
+                          className={`${styles.chip} ${selected ? styles.chipSelected : ''}`}
+                          onClick={() => toggleSize(size.id)}
+                          aria-pressed={selected}
+                        >
+                          {size.name}
+                        </button>
+                      );
+                    })}
+              </div>
+            )}
             {errors.sizeIds && <span className={styles.errorMessage}>{errors.sizeIds}</span>}
           </div>
 
