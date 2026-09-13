@@ -63,6 +63,11 @@
   border-bottom: 4px solid transparent;
 }
 
+.navItem:hover {
+  cursor: pointer;
+  color: var(--color-text-primary);
+}
+
 .navItemActive {
   color: var(--color-text-primary);
   border-bottom-color: var(--color-brand-primary);

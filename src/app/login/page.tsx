@@ -56,7 +56,7 @@ export default function LoginPage() {
 
       toast.success('Login realizado com sucesso!');
 
-      router.push('/dashboard');
+      router.push('/products');
     }, 2000);
   };
 

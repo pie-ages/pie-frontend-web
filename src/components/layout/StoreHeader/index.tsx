@@ -1,11 +1,15 @@
+'use client';
+import { usePathname, useRouter } from 'next/navigation';
 import styles from './styles.module.css';
 
 const NAV_ITEMS = [
-  { label: 'Produtos', active: true },
-  { label: 'Importar', active: false },
+  { label: 'Produtos', redirect: '/products' },
+  { label: 'Importar', redirect: '/import' },
 ];
 
 export function StoreHeader() {
+  const pathname = usePathname();
+  const router = useRouter();
   return (
     <header className={styles.topbar}>
       <div className={styles.inner}>
@@ -20,7 +24,14 @@ export function StoreHeader() {
             {NAV_ITEMS.map((item) => (
               <span
                 key={item.label}
-                className={`${styles.navItem} ${item.active ? styles.navItemActive : ''}`}
+                className={`${styles.navItem} ${
+                  pathname === item.redirect || pathname.startsWith(`${item.redirect}/`)
+                    ? styles.navItemActive
+                    : ''
+                }`}
+                onClick={() => {
+                  router.push(item.redirect);
+                }}
               >
                 {item.label}
               </span>
