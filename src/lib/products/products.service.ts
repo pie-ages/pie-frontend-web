@@ -1,4 +1,4 @@
-import type { Product } from '@/types/products';
+import type { Product, ProductStatus } from '@/types/products';
 import type { ProductFormData, ProductFormValues } from '@/types/productForm';
 import { MOCK_PRODUCTS } from './products.mock';
 import { MOCK_PRODUCT_FORM_DETAILS } from './product-form.mock';
@@ -8,6 +8,21 @@ const SIMULATED_LATENCY_MS = 600;
 export async function getProducts(): Promise<Product[]> {
   await new Promise((resolve) => setTimeout(resolve, SIMULATED_LATENCY_MS));
   return MOCK_PRODUCTS;
+}
+
+export async function updateProductAvailability(
+  productId: string,
+  status: ProductStatus,
+): Promise<Product> {
+  await new Promise((resolve) => setTimeout(resolve, SIMULATED_LATENCY_MS));
+
+  const product = MOCK_PRODUCTS.find((item) => item.id === productId);
+  if (!product) {
+    throw new Error('Produto não encontrado');
+  }
+
+  product.status = status;
+  return product;
 }
 
 export type { ProductFormData };

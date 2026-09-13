@@ -1,9 +1,23 @@
 import type { Product, ProductFilters } from '@/types/products';
 
+export const SIZES_BY_PIECE: Record<string, string[]> = {
+  Camiseta: ['PP', 'P', 'M', 'G', 'GG'],
+  Camisa: ['PP', 'P', 'M', 'G', 'GG'],
+  Vestido: ['PP', 'P', 'M', 'G', 'GG'],
+  Blazer: ['PP', 'P', 'M', 'G', 'GG'],
+  Casaco: ['PP', 'P', 'M', 'G', 'GG'],
+  Calça: ['34', '36', '38', '40', '42', '44'],
+  Saia: ['PP', 'P', 'M', 'G', 'GG'],
+  Sapato: ['33', '34', '35', '36', '37', '38', '39', '40', '41'],
+  Sandália: ['33', '34', '35', '36', '37', '38', '39', '40', '41'],
+  Bota: ['33', '34', '35', '36', '37', '38', '39', '40', '41'],
+};
+
 export const EMPTY_FILTERS: ProductFilters = {
   search: '',
   style: '',
   piece: '',
+  size: '',
   status: '',
 };
 
@@ -22,8 +36,9 @@ export function filterProducts(products: Product[], filters: ProductFilters): Pr
       product.code.toLowerCase().includes(search);
     const matchesStyle = filters.style === '' || product.style === filters.style;
     const matchesPiece = filters.piece === '' || product.piece === filters.piece;
+    const matchesSize = filters.size === '' || product.sizes.includes(filters.size);
     const matchesStatus = filters.status === '' || product.status === filters.status;
 
-    return matchesSearch && matchesStyle && matchesPiece && matchesStatus;
+    return matchesSearch && matchesStyle && matchesPiece && matchesSize && matchesStatus;
   });
 }

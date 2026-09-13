@@ -3,14 +3,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { ArrowUpFromLine, Plus } from 'lucide-react';
-import type { Product, ProductFilters } from '@/types/products';
-import { getProducts } from '@/lib/products/products.service';
+import { toast } from 'sonner';
+import type { Product, ProductFilters, ProductStatus } from '@/types/products';
+import { getProducts, updateProductAvailability } from '@/lib/products/products.service';
 import { EMPTY_FILTERS, filterProducts, uniqueValues } from '@/lib/products/products.filters';
 import { ProductsMetrics } from '@/components/products/ProductsMetrics';
 import { ProductsFilter } from '@/components/products/ProductsFilter';
 import { ProductsTable } from '@/components/products/ProductsTable';
 import { ProductsPagination } from '@/components/products/ProductsPagination';
 import { StoreHeader } from '@/components/layout/StoreHeader';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import styles from './page.module.css';
 
 type Status = 'loading' | 'error' | 'ready';
@@ -23,6 +25,8 @@ export default function ProductsPage() {
   const [filters, setFilters] = useState<ProductFilters>(EMPTY_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
+  const [pendingAvailabilityIds, setPendingAvailabilityIds] = useState<Set<string>>(new Set());
+  const [productToRemove, setProductToRemove] = useState<Product | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -60,6 +64,45 @@ export default function ProductsPage() {
 
   const changePage = (page: number) => {
     setCurrentPage(Math.min(Math.max(page, 1), totalPages));
+  };
+
+  const applyAvailabilityChange = async (product: Product, nextStatus: ProductStatus) => {
+    setPendingAvailabilityIds((current) => new Set(current).add(product.id));
+
+    try {
+      const updated = await updateProductAvailability(product.id, nextStatus);
+      setProducts((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+      toast.success(
+        nextStatus === 'PUBLICADO'
+          ? `${product.name} disponibilizado no catálogo.`
+          : `${product.name} retirado do catálogo.`,
+      );
+    } catch {
+      toast.error('Não foi possível atualizar a disponibilidade. Tente novamente.', {
+        id: `availability-error-${product.id}`,
+      });
+    } finally {
+      setPendingAvailabilityIds((current) => {
+        const next = new Set(current);
+        next.delete(product.id);
+        return next;
+      });
+    }
+  };
+
+  const requestAvailabilityChange = (product: Product) => {
+    if (product.status === 'PUBLICADO') {
+      setProductToRemove(product);
+      return;
+    }
+
+    applyAvailabilityChange(product, 'PUBLICADO');
+  };
+
+  const confirmRemoval = async () => {
+    if (!productToRemove) return;
+    await applyAvailabilityChange(productToRemove, 'PAUSADO');
+    setProductToRemove(null);
   };
 
   return (
@@ -122,7 +165,11 @@ export default function ProductsPage() {
 
             {filteredProducts.length > 0 && (
               <div className={styles.tableSection}>
-                <ProductsTable products={pageProducts} />
+                <ProductsTable
+                  products={pageProducts}
+                  pendingAvailabilityIds={pendingAvailabilityIds}
+                  onToggleAvailability={requestAvailabilityChange}
+                />
                 <div className={styles.tableFooter}>
                   <label className={styles.perPageLabel}>
                     Exibindo
@@ -153,6 +200,17 @@ export default function ProductsPage() {
           </>
         )}
       </main>
+
+      {productToRemove && (
+        <ConfirmDialog
+          title="Retirar produto do catálogo?"
+          description={`"${productToRemove.name}" vai parar de aparecer na vitrine. O produto não é apagado — você pode disponibilizá-lo novamente quando quiser.`}
+          confirmLabel="Retirar"
+          isConfirming={pendingAvailabilityIds.has(productToRemove.id)}
+          onConfirm={confirmRemoval}
+          onCancel={() => setProductToRemove(null)}
+        />
+      )}
     </div>
   );
 }
