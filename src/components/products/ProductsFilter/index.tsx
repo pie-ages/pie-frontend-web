@@ -3,9 +3,9 @@ import { SIZES_BY_PIECE } from '@/lib/products/products.filters';
 import styles from './styles.module.css';
 
 const STATUS_OPTIONS: { value: ProductStatus; label: string }[] = [
-  { value: 'PUBLICADO', label: 'Publicado' },
-  { value: 'RASCUNHO', label: 'Rascunho' },
-  { value: 'PAUSADO', label: 'Pausado' },
+  { value: 'PUBLISHED', label: 'Publicado' },
+  { value: 'DRAFT', label: 'Rascunho' },
+  { value: 'PAUSED', label: 'Pausado' },
 ];
 
 interface ProductsFilterProps {

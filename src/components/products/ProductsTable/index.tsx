@@ -38,13 +38,18 @@ export function ProductsTable({
         </thead>
         <tbody>
           {products.map((product) => {
-            const isAvailable = product.status === 'PUBLICADO';
+            const isAvailable = product.status === 'PUBLISHED';
             const isPending = pendingAvailabilityIds.has(product.id);
 
             return (
               <tr key={product.id} className={styles.row}>
                 <td className={`${styles.td} ${styles.photoCell}`}>
-                  <div className={styles.photo} aria-hidden="true" />
+                  {product.photoUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={product.photoUrl} alt={product.name} className={styles.photo} />
+                  ) : (
+                    <div className={styles.photo} aria-hidden="true" />
+                  )}
                 </td>
                 <td className={styles.td}>
                   <span className={styles.name}>{product.name}</span>

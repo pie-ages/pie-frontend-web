@@ -11,7 +11,7 @@ export const MOCK_PRODUCTS: Product[] = [
     color: 'Verde',
     sizes: ['P', 'M', 'G'],
     price: 199,
-    status: 'PUBLICADO',
+    status: 'PUBLISHED',
   },
   {
     id: 'AN-1039',
@@ -23,7 +23,7 @@ export const MOCK_PRODUCTS: Product[] = [
     color: 'Off-white',
     sizes: ['P', 'M', 'G', 'GG'],
     price: 459,
-    status: 'PUBLICADO',
+    status: 'PUBLISHED',
   },
   {
     id: 'AN-1035',
@@ -35,7 +35,7 @@ export const MOCK_PRODUCTS: Product[] = [
     color: 'Azul',
     sizes: ['P', 'M', 'G'],
     price: 199.9,
-    status: 'PUBLICADO',
+    status: 'PUBLISHED',
   },
   {
     id: 'AN-1031',
@@ -47,7 +47,7 @@ export const MOCK_PRODUCTS: Product[] = [
     color: 'Cinza',
     sizes: ['36', '38', '40', '42'],
     price: 289,
-    status: 'RASCUNHO',
+    status: 'DRAFT',
   },
   {
     id: 'AN-1029',
@@ -59,7 +59,7 @@ export const MOCK_PRODUCTS: Product[] = [
     color: 'Terracota',
     sizes: ['M', 'G'],
     price: 289,
-    status: 'PUBLICADO',
+    status: 'PUBLISHED',
   },
   {
     id: 'AN-1024',
@@ -71,7 +71,7 @@ export const MOCK_PRODUCTS: Product[] = [
     color: 'Preto',
     sizes: ['P', 'M'],
     price: 349,
-    status: 'PAUSADO',
+    status: 'PAUSED',
   },
   {
     id: 'AN-1019',
@@ -83,7 +83,7 @@ export const MOCK_PRODUCTS: Product[] = [
     color: 'Preto',
     sizes: ['35', '36', '37', '38', '39'],
     price: 179,
-    status: 'PUBLICADO',
+    status: 'PUBLISHED',
   },
   {
     id: 'AN-1014',
@@ -95,6 +95,6 @@ export const MOCK_PRODUCTS: Product[] = [
     color: 'Off-white',
     sizes: ['P', 'M', 'G'],
     price: 89.9,
-    status: 'RASCUNHO',
+    status: 'DRAFT',
   },
 ];

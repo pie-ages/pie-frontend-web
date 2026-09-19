@@ -1,4 +1,4 @@
-export type ProductStatus = 'PUBLICADO' | 'RASCUNHO' | 'PAUSADO';
+export type ProductStatus = 'PUBLISHED' | 'DRAFT' | 'PAUSED';
 
 export interface Product {
   id: string;

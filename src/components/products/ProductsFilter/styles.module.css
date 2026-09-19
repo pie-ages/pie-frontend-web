@@ -8,10 +8,10 @@
 
 .searchWrapper {
   position: relative;
-  width: 360px;
+  flex: 1;
+  min-width: 180px;
   max-width: 360px;
   height: 37px;
-  flex: none;
   isolation: isolate;
 }
 
@@ -70,6 +70,14 @@
   font-size: 0.8125rem;
   color: var(--color-text-muted);
   white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .counter {
+    flex-basis: 100%;
+    margin-left: 0;
+    text-align: right;
+  }
 }
 
 .search:focus,
