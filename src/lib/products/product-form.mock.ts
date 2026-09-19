@@ -92,7 +92,7 @@ export const MOCK_PRODUCT_FORM_DETAILS: Record<string, ProductFormData> = {
           isPrimary: false,
         },
       ],
-      status: 'PUBLICADO',
+      status: 'PUBLISHED',
     },
   },
 };

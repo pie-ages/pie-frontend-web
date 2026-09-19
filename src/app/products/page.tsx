@@ -22,6 +22,7 @@ const PER_PAGE_OPTIONS = [5, 10, 20];
 export default function ProductsPage() {
   const [status, setStatus] = useState<Status>('loading');
   const [products, setProducts] = useState<Product[]>([]);
+  const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState<ProductFilters>(EMPTY_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
@@ -31,10 +32,18 @@ export default function ProductsPage() {
   useEffect(() => {
     let active = true;
 
-    getProducts()
-      .then((list) => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setStatus('loading');
+    getProducts({
+      search: filters.search,
+      status: filters.status,
+      page: currentPage,
+      size: perPage,
+    })
+      .then(({ items, total: serverTotal }) => {
         if (!active) return;
-        setProducts(list);
+        setProducts(items);
+        setTotal(serverTotal);
         setStatus('ready');
       })
       .catch(() => {
@@ -45,17 +54,19 @@ export default function ProductsPage() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [filters.search, filters.status, currentPage, perPage]);
 
   const styleOptions = useMemo(() => uniqueValues(products, 'style'), [products]);
   const pieceOptions = useMemo(() => uniqueValues(products, 'piece'), [products]);
-  const filteredProducts = useMemo(() => filterProducts(products, filters), [products, filters]);
+  const filteredProducts = useMemo(
+    () => filterProducts(products, { ...filters, search: '', status: '' }),
+    [products, filters],
+  );
 
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / perPage));
+  const hasActiveFilters = Object.values(filters).some((v) => v !== '');
+  const totalPages = Math.max(1, Math.ceil(total / perPage));
   const safePage = Math.min(currentPage, totalPages);
-  const startIndex = (safePage - 1) * perPage;
-  const pageProducts = filteredProducts.slice(startIndex, startIndex + perPage);
-  const resultsLabel = `${pageProducts.length} de ${products.length} produtos`;
+  const resultsLabel = `${filteredProducts.length} de ${total} produtos`;
 
   const applyFilters = (newFilters: ProductFilters) => {
     setFilters(newFilters);
@@ -70,10 +81,12 @@ export default function ProductsPage() {
     setPendingAvailabilityIds((current) => new Set(current).add(product.id));
 
     try {
-      const updated = await updateProductAvailability(product.id, nextStatus);
-      setProducts((current) => current.map((item) => (item.id === updated.id ? updated : item)));
+      await updateProductAvailability(product.id, nextStatus);
+      setProducts((current) =>
+        current.map((item) => (item.id === product.id ? { ...item, status: nextStatus } : item)),
+      );
       toast.success(
-        nextStatus === 'PUBLICADO'
+        nextStatus === 'PUBLISHED'
           ? `${product.name} disponibilizado no catálogo.`
           : `${product.name} retirado do catálogo.`,
       );
@@ -91,17 +104,17 @@ export default function ProductsPage() {
   };
 
   const requestAvailabilityChange = (product: Product) => {
-    if (product.status === 'PUBLICADO') {
+    if (product.status === 'PUBLISHED') {
       setProductToRemove(product);
       return;
     }
 
-    applyAvailabilityChange(product, 'PUBLICADO');
+    applyAvailabilityChange(product, 'PUBLISHED');
   };
 
   const confirmRemoval = async () => {
     if (!productToRemove) return;
-    await applyAvailabilityChange(productToRemove, 'PAUSADO');
+    await applyAvailabilityChange(productToRemove, 'PAUSED');
     setProductToRemove(null);
   };
 
@@ -146,27 +159,28 @@ export default function ProductsPage() {
               onFiltersChange={applyFilters}
             />
 
-            {products.length === 0 && (
+            {total === 0 && !hasActiveFilters && (
               <p className={styles.notice}>Nenhum produto cadastrado ainda.</p>
             )}
 
-            {products.length > 0 && filteredProducts.length === 0 && (
-              <div className={styles.emptyState}>
-                <p>Nenhum produto encontrado com esses filtros.</p>
-                <button
-                  type="button"
-                  className={styles.clearFilters}
-                  onClick={() => applyFilters(EMPTY_FILTERS)}
-                >
-                  Limpar filtros
-                </button>
-              </div>
-            )}
+            {(total === 0 && hasActiveFilters) ||
+              (total > 0 && filteredProducts.length === 0 && (
+                <div className={styles.emptyState}>
+                  <p>Nenhum produto encontrado com esses filtros.</p>
+                  <button
+                    type="button"
+                    className={styles.clearFilters}
+                    onClick={() => applyFilters(EMPTY_FILTERS)}
+                  >
+                    Limpar filtros
+                  </button>
+                </div>
+              ))}
 
             {filteredProducts.length > 0 && (
               <div className={styles.tableSection}>
                 <ProductsTable
-                  products={pageProducts}
+                  products={filteredProducts}
                   pendingAvailabilityIds={pendingAvailabilityIds}
                   onToggleAvailability={requestAvailabilityChange}
                 />

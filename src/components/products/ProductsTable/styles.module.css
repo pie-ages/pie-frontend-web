@@ -2,10 +2,12 @@
   flex: 1;
   width: 100%;
   min-height: calc(85px * 5);
+  overflow-x: hidden;
 }
 
 .table {
   width: 100%;
+  min-width: 900px;
   border-collapse: collapse;
   font-size: 0.875rem;
   table-layout: fixed;
@@ -105,10 +107,14 @@
   height: 60px;
   background: linear-gradient(38.42deg, #d7d3d3 0%, #d7d3d3 6.8%, #eae9e9 6.8%, #eae9e9 13.6%);
   border: 1px solid rgba(32, 30, 29, 0.25);
+  object-fit: cover;
 }
 
 .name {
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-weight: 600;
   color: var(--color-text-primary);
 }

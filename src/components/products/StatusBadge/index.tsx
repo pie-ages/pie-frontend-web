@@ -2,15 +2,15 @@ import type { ProductStatus } from '@/types/products';
 import styles from './styles.module.css';
 
 const CLASS_BY_STATUS: Record<ProductStatus, string> = {
-  PUBLICADO: styles.published,
-  RASCUNHO: styles.draft,
-  PAUSADO: styles.paused,
+  PUBLISHED: styles.published,
+  DRAFT: styles.draft,
+  PAUSED: styles.paused,
 };
 
 const LABEL_BY_STATUS: Record<ProductStatus, string> = {
-  PUBLICADO: 'Publicado',
-  RASCUNHO: 'Rascunho',
-  PAUSADO: 'Pausado',
+  PUBLISHED: 'Publicado',
+  DRAFT: 'Rascunho',
+  PAUSED: 'Pausado',
 };
 
 interface StatusBadgeProps {

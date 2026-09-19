@@ -39,5 +39,5 @@ export const EMPTY_PRODUCT_FORM_VALUES: ProductFormValues = {
   styleId: '',
   sizeIds: [],
   images: [],
-  status: 'RASCUNHO',
+  status: 'DRAFT',
 };

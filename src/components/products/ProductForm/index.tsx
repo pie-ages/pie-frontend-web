@@ -81,12 +81,12 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
 
   const submit = async (targetStatus: ProductStatus) => {
     const formErrors =
-      targetStatus === 'RASCUNHO' ? validateDraftForm(values) : validateProductForm(values);
+      targetStatus === 'DRAFT' ? validateDraftForm(values) : validateProductForm(values);
 
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       toast.error(
-        targetStatus === 'RASCUNHO'
+        targetStatus === 'DRAFT'
           ? 'Informe o nome do produto antes de salvar.'
           : 'Revise os campos destacados antes de continuar.',
         { id: 'product-form-error' },
@@ -274,9 +274,9 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
                 type="button"
                 className={styles.primaryButton}
                 disabled={submitting}
-                onClick={() => submit('PUBLICADO')}
+                onClick={() => submit('PUBLISHED')}
               >
-                {submitting && submittingStatus === 'PUBLICADO'
+                {submitting && submittingStatus === 'PUBLISHED'
                   ? 'Publicando...'
                   : 'Publicar produto'}
               </button>
@@ -284,9 +284,9 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
                 type="button"
                 className={styles.secondaryButton}
                 disabled={submitting}
-                onClick={() => submit('RASCUNHO')}
+                onClick={() => submit('DRAFT')}
               >
-                {submitting && submittingStatus === 'RASCUNHO'
+                {submitting && submittingStatus === 'DRAFT'
                   ? 'Salvando...'
                   : 'Salvar como rascunho'}
               </button>
@@ -307,9 +307,9 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
                 type="button"
                 className={styles.secondaryButton}
                 disabled={submitting}
-                onClick={() => submit('PAUSADO')}
+                onClick={() => submit('PAUSED')}
               >
-                {submitting && submittingStatus === 'PAUSADO' ? 'Pausando...' : 'Pausar na Vitrine'}
+                {submitting && submittingStatus === 'PAUSED' ? 'Pausando...' : 'Pausar na Vitrine'}
               </button>
             </>
           )}
