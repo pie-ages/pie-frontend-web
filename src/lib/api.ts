@@ -1,3 +1,5 @@
+import axios, { AxiosError } from 'axios';
+
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8080/api';
 
 export class ApiError extends Error {
@@ -9,11 +11,18 @@ export class ApiError extends Error {
   }
 }
 
-export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, init);
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ message: res.statusText }));
-    throw new ApiError((err as { message?: string }).message ?? `HTTP ${res.status}`, res.status);
+export const apiClient = axios.create({ baseURL: BASE_URL });
+
+export async function apiFetch<T>(path: string): Promise<T> {
+  try {
+    const { data } = await apiClient.get<T>(path);
+    return data;
+  } catch (err) {
+    if (err instanceof AxiosError && err.response) {
+      const message =
+        (err.response.data as { message?: string })?.message ?? `HTTP ${err.response.status}`;
+      throw new ApiError(message, err.response.status);
+    }
+    throw err;
   }
-  return res.json() as Promise<T>;
 }
