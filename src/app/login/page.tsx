@@ -10,6 +10,7 @@ import FormHeader from '@/components/ui/FormHeader';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import FormFooterLink from '@/components/ui/FormFooterLink';
+import { login, saveToken } from '@/lib/auth/auth.service';
 
 import styles from './login.module.css';
 
@@ -29,7 +30,7 @@ export default function LoginPage() {
     toast.dismiss('login-error');
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!formData.email || !formData.senha) {
@@ -45,19 +46,16 @@ export default function LoginPage() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      console.log('Payload da API (Login):', formData);
-      setIsLoading(false);
-
-      if (formData.email !== 'teste@ages.com.br' || formData.senha !== '123456') {
-        toast.error('E-mail ou senha inválidos.', { id: 'login-error' });
-        return;
-      }
-
+    try {
+      const { token } = await login(formData.email, formData.senha);
+      saveToken(token);
       toast.success('Login realizado com sucesso!');
-
       router.push('/products');
-    }, 2000);
+    } catch {
+      toast.error('E-mail ou senha inválidos.', { id: 'login-error' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
