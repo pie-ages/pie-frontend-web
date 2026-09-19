@@ -1,21 +1,5 @@
 import Api from '@/lib/api';
-
-interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-interface UserSummary {
-  id: string;
-  name: string;
-  email: string;
-  photoUrl: string | null;
-}
-
-interface LoginResponse {
-  token: string;
-  user: UserSummary;
-}
+import type { LoginRequest, LoginResponse } from '@/shared/auth';
 
 const TOKEN_KEY = 'pie_auth_token';
 
