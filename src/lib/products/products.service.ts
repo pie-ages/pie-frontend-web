@@ -1,8 +1,9 @@
+import type { AxiosError } from 'axios';
 import type { Product, ProductStatus } from '@/types/products';
 import type { ProductFormData, ProductFormValues } from '@/types/productForm';
 import type { TaxonomyTerm } from '@/types/taxonomy';
 import { MOCK_TAXONOMY } from '@/lib/taxonomy/taxonomy.mock';
-import { apiFetch, ApiError } from '@/lib/api';
+import Api from '@/lib/api';
 
 const SIMULATED_LATENCY_MS = 600;
 
@@ -61,7 +62,7 @@ export async function getProducts(params?: {
   if (params?.page != null) qs.set('page', String((params.page ?? 1) - 1));
   if (params?.size != null) qs.set('size', String(params.size));
 
-  const data = await apiFetch<ApiProductsPage>(
+  const { data } = await Api.get<ApiProductsPage>(
     `/products/company/${companyId}${qs.size ? `?${qs}` : ''}`,
   );
 
@@ -99,7 +100,7 @@ export type { ProductFormData };
 
 export async function getProductFormData(id: string): Promise<ProductFormData | null> {
   try {
-    const p = await apiFetch<ApiProductDetail>(`/products/${id}`);
+    const { data: p } = await Api.get<ApiProductDetail>(`/products/${id}`);
     const values: ProductFormValues = {
       name: p.name,
       description: p.description ?? '',
@@ -116,7 +117,7 @@ export async function getProductFormData(id: string): Promise<ProductFormData | 
     };
     return { code: p.id, updatedAt: p.createdAt, savedCount: 0, values };
   } catch (err) {
-    if (err instanceof ApiError && err.status === 404) return null;
+    if ((err as AxiosError)?.response?.status === 404) return null;
     throw err;
   }
 }
