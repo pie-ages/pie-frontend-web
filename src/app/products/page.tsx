@@ -5,8 +5,14 @@ import Link from 'next/link';
 import { ArrowUpFromLine, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Product, ProductFilters, ProductStatus } from '@/types/products';
-import { getProducts, updateProductAvailability } from '@/lib/products/products.service';
+import {
+  getProducts,
+  updateProductAvailability,
+  deleteProduct,
+  duplicateProduct,
+} from '@/lib/products/products.service';
 import { EMPTY_FILTERS, filterProducts, uniqueValues } from '@/lib/products/products.filters';
+import { getCompany } from '@/lib/company/company.service';
 import { ProductsMetrics } from '@/components/products/ProductsMetrics';
 import { ProductsFilter } from '@/components/products/ProductsFilter';
 import { ProductsTable } from '@/components/products/ProductsTable';
@@ -25,9 +31,23 @@ export default function ProductsPage() {
   const [total, setTotal] = useState(0);
   const [filters, setFilters] = useState<ProductFilters>(EMPTY_FILTERS);
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState(() => {
+    if (typeof window === 'undefined') return 5;
+    const saved = Number(localStorage.getItem('products:perPage'));
+    return PER_PAGE_OPTIONS.includes(saved) ? saved : 5;
+  });
   const [pendingAvailabilityIds, setPendingAvailabilityIds] = useState<Set<string>>(new Set());
+  const [pendingActionIds, setPendingActionIds] = useState<Set<string>>(new Set());
   const [productToRemove, setProductToRemove] = useState<Product | null>(null);
+  const [productToDelete, setProductToDelete] = useState<Product | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+  const [companyName, setCompanyName] = useState('');
+
+  useEffect(() => {
+    getCompany()
+      .then((c) => setCompanyName(c.name))
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -54,7 +74,7 @@ export default function ProductsPage() {
     return () => {
       active = false;
     };
-  }, [filters.search, filters.status, currentPage, perPage]);
+  }, [filters.search, filters.status, currentPage, perPage, reloadKey]);
 
   const styleOptions = useMemo(() => uniqueValues(products, 'style'), [products]);
   const pieceOptions = useMemo(() => uniqueValues(products, 'piece'), [products]);
@@ -66,7 +86,10 @@ export default function ProductsPage() {
   const hasActiveFilters = Object.values(filters).some((v) => v !== '');
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const safePage = Math.min(currentPage, totalPages);
-  const resultsLabel = `${filteredProducts.length} de ${total} produtos`;
+  const hasClientFilters = filters.piece !== '' || filters.style !== '' || filters.size !== '';
+  const resultsLabel = hasClientFilters
+    ? `${filteredProducts.length} produto${filteredProducts.length !== 1 ? 's' : ''} na página`
+    : `${total} produto${total !== 1 ? 's' : ''}`;
 
   const applyFilters = (newFilters: ProductFilters) => {
     setFilters(newFilters);
@@ -118,13 +141,52 @@ export default function ProductsPage() {
     setProductToRemove(null);
   };
 
+  const handleDuplicate = async (product: Product) => {
+    setPendingActionIds((current) => new Set(current).add(product.id));
+    try {
+      await duplicateProduct(product.id);
+      toast.success(`Cópia de "${product.name}" criada.`);
+      setCurrentPage(1);
+      setReloadKey((k) => k + 1);
+    } catch {
+      toast.error('Não foi possível duplicar o produto. Tente novamente.');
+    } finally {
+      setPendingActionIds((current) => {
+        const next = new Set(current);
+        next.delete(product.id);
+        return next;
+      });
+    }
+  };
+
+  const confirmDelete = async () => {
+    if (!productToDelete) return;
+    const target = productToDelete;
+    setProductToDelete(null);
+    setPendingActionIds((current) => new Set(current).add(target.id));
+    try {
+      await deleteProduct(target.id);
+      toast.success(`"${target.name}" foi excluído.`);
+      setCurrentPage(1);
+      setReloadKey((k) => k + 1);
+    } catch {
+      toast.error('Não foi possível excluir o produto. Tente novamente.');
+    } finally {
+      setPendingActionIds((current) => {
+        const next = new Set(current);
+        next.delete(target.id);
+        return next;
+      });
+    }
+  };
+
   return (
     <div className={styles.page}>
       <StoreHeader />
       <main className={styles.container}>
         <header className={styles.header}>
           <div>
-            <p className={styles.pretitle}>Ateliê Nove</p>
+            <p className={styles.pretitle}>{companyName}</p>
             <h1 className={styles.title}>Produtos</h1>
           </div>
           <div className={styles.actions}>
@@ -163,26 +225,29 @@ export default function ProductsPage() {
               <p className={styles.notice}>Nenhum produto cadastrado ainda.</p>
             )}
 
-            {(total === 0 && hasActiveFilters) ||
-              (total > 0 && filteredProducts.length === 0 && (
-                <div className={styles.emptyState}>
-                  <p>Nenhum produto encontrado com esses filtros.</p>
-                  <button
-                    type="button"
-                    className={styles.clearFilters}
-                    onClick={() => applyFilters(EMPTY_FILTERS)}
-                  >
-                    Limpar filtros
-                  </button>
-                </div>
-              ))}
+            {((total === 0 && hasActiveFilters) ||
+              (total > 0 && filteredProducts.length === 0)) && (
+              <div className={styles.emptyState}>
+                <p>Nenhum produto encontrado com esses filtros.</p>
+                <button
+                  type="button"
+                  className={styles.clearFilters}
+                  onClick={() => applyFilters(EMPTY_FILTERS)}
+                >
+                  Limpar filtros
+                </button>
+              </div>
+            )}
 
             {filteredProducts.length > 0 && (
               <div className={styles.tableSection}>
                 <ProductsTable
                   products={filteredProducts}
                   pendingAvailabilityIds={pendingAvailabilityIds}
+                  pendingActionIds={pendingActionIds}
                   onToggleAvailability={requestAvailabilityChange}
+                  onDuplicate={handleDuplicate}
+                  onDelete={setProductToDelete}
                 />
                 <div className={styles.tableFooter}>
                   <label className={styles.perPageLabel}>
@@ -191,7 +256,9 @@ export default function ProductsPage() {
                       className={styles.perPageSelect}
                       value={perPage}
                       onChange={(e) => {
-                        setPerPage(Number(e.target.value));
+                        const n = Number(e.target.value);
+                        localStorage.setItem('products:perPage', String(n));
+                        setPerPage(n);
                         setCurrentPage(1);
                       }}
                     >
@@ -223,6 +290,17 @@ export default function ProductsPage() {
           isConfirming={pendingAvailabilityIds.has(productToRemove.id)}
           onConfirm={confirmRemoval}
           onCancel={() => setProductToRemove(null)}
+        />
+      )}
+
+      {productToDelete && (
+        <ConfirmDialog
+          title="Excluir produto?"
+          description={`"${productToDelete.name}" será excluído permanentemente. Essa ação não pode ser desfeita.`}
+          confirmLabel="Excluir"
+          isConfirming={pendingActionIds.has(productToDelete.id)}
+          onConfirm={confirmDelete}
+          onCancel={() => setProductToDelete(null)}
         />
       )}
     </div>

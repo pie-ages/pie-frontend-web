@@ -2,12 +2,11 @@
   flex: 1;
   width: 100%;
   min-height: calc(85px * 5);
-  overflow-x: hidden;
 }
 
 .table {
   width: 100%;
-  min-width: 900px;
+  min-width: 1050px;
   border-collapse: collapse;
   font-size: 0.875rem;
   table-layout: fixed;
@@ -29,15 +28,18 @@
   width: 110px;
 }
 .th:nth-child(6) {
-  width: 150px;
+  width: 140px;
 }
 .th:nth-child(7) {
-  width: 110px;
+  width: 130px;
 }
 .th:nth-child(8) {
-  width: 120px;
+  width: 110px;
 }
 .th:nth-child(9) {
+  width: 120px;
+}
+.th:nth-child(10) {
   width: 110px;
 }
 
@@ -90,6 +92,13 @@
   color: var(--color-text-secondary);
   border: 1px solid #cba790;
   border-radius: 0;
+}
+
+.materialText {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .photoCell {
