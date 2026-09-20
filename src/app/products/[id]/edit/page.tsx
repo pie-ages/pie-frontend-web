@@ -8,7 +8,7 @@ import { StoreHeader } from '@/components/layout/StoreHeader';
 import { StatusBadge } from '@/components/products/StatusBadge';
 import { ProductForm } from '@/components/products/ProductForm';
 import { getProductFormData, type ProductFormData } from '@/lib/products/products.service';
-import { formatRelativeTime } from '@/lib/utils/date';
+import { formatRelativeTime } from '@/utils/date';
 import styles from './page.module.css';
 
 type PageStatus = 'loading' | 'error' | 'not-found' | 'ready';
