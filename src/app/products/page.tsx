@@ -10,9 +10,9 @@ import {
   updateProductAvailability,
   deleteProduct,
   duplicateProduct,
-} from '@/lib/products/Productsservice';
+} from '@/lib/products/ProductsService';
 import { EMPTY_FILTERS, filterProducts, uniqueValues } from '@/lib/products/products.filters';
-import { getCompany } from '@/lib/company/Companyservice';
+import { getCompany } from '@/lib/company/CompanyService';
 import { ProductsMetrics } from '@/components/products/ProductsMetrics';
 import { ProductsFilter } from '@/components/products/ProductsFilter';
 import { ProductsTable } from '@/components/products/ProductsTable';
