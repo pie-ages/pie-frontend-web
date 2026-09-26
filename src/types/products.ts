@@ -8,6 +8,7 @@ export interface Product {
   piece: string;
   style: string;
   color: string;
+  materials: string[];
   sizes: string[];
   price: number;
   status: ProductStatus;

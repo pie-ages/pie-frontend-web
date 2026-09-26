@@ -7,7 +7,7 @@ import type { StoreRequest } from '@/types/store-requests';
 import {
   getStoreRequests,
   updateStoreRequestStatus,
-} from '@/lib/store-requests/store-requests.service';
+} from '@/lib/store-requests/StoreRequestsService';
 import { StoreHeader } from '@/components/layout/StoreHeader';
 import styles from './page.module.css';
 

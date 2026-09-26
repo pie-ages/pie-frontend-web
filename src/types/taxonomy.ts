@@ -8,4 +8,5 @@ export interface Taxonomy {
   colors: TaxonomyTerm[];
   styles: TaxonomyTerm[];
   sizes: TaxonomyTerm[];
+  materials: TaxonomyTerm[];
 }

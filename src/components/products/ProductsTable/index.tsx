@@ -12,13 +12,19 @@ const priceFormatter = new Intl.NumberFormat('pt-BR', {
 interface ProductsTableProps {
   products: Product[];
   pendingAvailabilityIds: Set<string>;
+  pendingActionIds: Set<string>;
   onToggleAvailability: (product: Product) => void;
+  onDuplicate: (product: Product) => void;
+  onDelete: (product: Product) => void;
 }
 
 export function ProductsTable({
   products,
   pendingAvailabilityIds,
+  pendingActionIds,
   onToggleAvailability,
+  onDuplicate,
+  onDelete,
 }: ProductsTableProps) {
   return (
     <div className={styles.wrapper}>
@@ -31,6 +37,7 @@ export function ProductsTable({
             <th className={styles.th}>Estilo</th>
             <th className={styles.th}>Cor</th>
             <th className={styles.th}>Tamanhos</th>
+            <th className={styles.th}>Material</th>
             <th className={styles.th}>Preço</th>
             <th className={styles.th}>Status</th>
             <th className={styles.th} />
@@ -40,6 +47,7 @@ export function ProductsTable({
           {products.map((product) => {
             const isAvailable = product.status === 'PUBLISHED';
             const isPending = pendingAvailabilityIds.has(product.id);
+            const isActionPending = pendingActionIds.has(product.id);
 
             return (
               <tr key={product.id} className={styles.row}>
@@ -61,6 +69,11 @@ export function ProductsTable({
                 </td>
                 <td className={`${styles.td} ${styles.softText}`}>{product.color}</td>
                 <td className={`${styles.td} ${styles.regularText}`}>{product.sizes.join(' ')}</td>
+                <td className={`${styles.td} ${styles.softText}`}>
+                  <span className={styles.materialText} title={product.materials.join(', ')}>
+                    {product.materials.length > 0 ? product.materials.join(', ') : '—'}
+                  </span>
+                </td>
                 <td className={styles.td}>{priceFormatter.format(product.price)}</td>
                 <td className={styles.td}>
                   <StatusBadge status={product.status} />
@@ -71,9 +84,9 @@ export function ProductsTable({
                       type="button"
                       className={styles.actionButton}
                       aria-label={isAvailable ? 'Retirar do catálogo' : 'Disponibilizar produto'}
-                      title={isAvailable ? 'Retirar do catálogo' : 'Disponibilizar'}
+                      title={isAvailable ? 'Retirar do catálogo' : 'Publicar no catálogo'}
                       onClick={() => onToggleAvailability(product)}
-                      disabled={isPending}
+                      disabled={isPending || isActionPending}
                     >
                       {isPending ? (
                         <Loader2
@@ -100,14 +113,26 @@ export function ProductsTable({
                       className={styles.actionButton}
                       aria-label="Duplicar produto"
                       title="Duplicar"
+                      onClick={() => onDuplicate(product)}
+                      disabled={isActionPending}
                     >
-                      <Copy size={15} />
+                      {isActionPending ? (
+                        <Loader2
+                          size={15}
+                          className={styles.spinner}
+                          style={{ color: 'inherit' }}
+                        />
+                      ) : (
+                        <Copy size={15} />
+                      )}
                     </button>
                     <button
                       type="button"
                       className={`${styles.actionButton} ${styles.delete}`}
                       aria-label="Excluir produto"
                       title="Excluir"
+                      onClick={() => onDelete(product)}
+                      disabled={isActionPending}
                     >
                       <Trash2 size={15} />
                     </button>

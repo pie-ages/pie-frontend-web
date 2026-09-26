@@ -15,6 +15,7 @@ export interface ProductFormValues {
   categoryId: string;
   colorId: string;
   styleId: string;
+  materialIds: string[];
   sizeIds: string[];
   images: ProductImage[];
   status: ProductStatus;
@@ -37,6 +38,7 @@ export const EMPTY_PRODUCT_FORM_VALUES: ProductFormValues = {
   categoryId: '',
   colorId: '',
   styleId: '',
+  materialIds: [],
   sizeIds: [],
   images: [],
   status: 'DRAFT',

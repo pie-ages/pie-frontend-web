@@ -1,5 +1,7 @@
 'use client';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
+import { getCompany } from '@/lib/company/CompanyService';
 import styles from './styles.module.css';
 
 const NAV_ITEMS = [
@@ -11,6 +13,25 @@ const NAV_ITEMS = [
 export function StoreHeader() {
   const pathname = usePathname();
   const router = useRouter();
+  const [companyName, setCompanyName] = useState('');
+  const [companyEmail, setCompanyEmail] = useState('');
+
+  useEffect(() => {
+    getCompany()
+      .then((c) => {
+        setCompanyName(c.name);
+        setCompanyEmail(c.email);
+      })
+      .catch(() => {});
+  }, []);
+
+  const initials = companyName
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
+
   return (
     <header className={styles.topbar}>
       <div className={styles.inner}>
@@ -42,11 +63,11 @@ export function StoreHeader() {
 
         <div className={styles.account}>
           <span className={styles.avatar} aria-hidden="true">
-            AN
+            {initials}
           </span>
           <div className={styles.accountInfo}>
-            <span className={styles.accountName}>Ateliê Nove</span>
-            <span className={styles.accountEmail}>marina@atelienove.com.br</span>
+            <span className={styles.accountName}>{companyName}</span>
+            <span className={styles.accountEmail}>{companyEmail}</span>
           </div>
           <button type="button" className={styles.signOutButton}>
             Sair
