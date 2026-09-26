@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { getCompany } from '@/lib/company/company.service';
+import { getCompany } from '@/lib/company/companyservice';
 import styles from './styles.module.css';
 
 const NAV_ITEMS = [
