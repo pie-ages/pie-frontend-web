@@ -7,7 +7,7 @@ import { ChevronLeft } from 'lucide-react';
 import { StoreHeader } from '@/components/layout/StoreHeader';
 import { StatusBadge } from '@/components/products/StatusBadge';
 import { ProductForm } from '@/components/products/ProductForm';
-import { getProductFormData, type ProductFormData } from '@/lib/products/productsservice';
+import { getProductFormData, type ProductFormData } from '@/lib/products/Productsservice';
 import { formatRelativeTime } from '@/utils/date';
 import styles from './page.module.css';
 

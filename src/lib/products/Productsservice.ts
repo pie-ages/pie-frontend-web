@@ -2,7 +2,7 @@ import type { AxiosError } from 'axios';
 import type { Product, ProductStatus } from '@/types/products';
 import type { ProductFormData, ProductFormValues } from '@/types/productForm';
 import type { TaxonomyTerm } from '@/types/taxonomy';
-import { getTaxonomy } from '@/lib/taxonomy/taxonomyservice';
+import { getTaxonomy } from '@/lib/taxonomy/Taxonomyservice';
 import Api from '@/lib/api';
 
 interface ApiProduct {

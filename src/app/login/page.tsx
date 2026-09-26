@@ -10,7 +10,7 @@ import FormHeader from '@/components/ui/FormHeader';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import FormFooterLink from '@/components/ui/FormFooterLink';
-import { login, saveToken } from '@/lib/auth/authservice';
+import { login, saveToken } from '@/lib/auth/Authservice';
 
 import styles from './login.module.css';
 

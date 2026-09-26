@@ -6,13 +6,13 @@ import { toast } from 'sonner';
 import type { Taxonomy } from '@/types/taxonomy';
 import type { ProductFormErrors, ProductFormValues } from '@/types/productForm';
 import type { ProductStatus } from '@/types/products';
-import { getTaxonomy, SIZES_BY_CATEGORY } from '@/lib/taxonomy/taxonomyservice';
+import { getTaxonomy, SIZES_BY_CATEGORY } from '@/lib/taxonomy/Taxonomyservice';
 import {
   createProduct,
   updateProduct,
   updateProductAvailability,
   deleteProduct,
-} from '@/lib/products/productsservice';
+} from '@/lib/products/Productsservice';
 import {
   filterPriceInput,
   normalizePurchaseUrl,
