@@ -93,9 +93,7 @@ export async function updateProductAvailability(
 ): Promise<void> {
   const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
   const endpoint = status === 'PUBLISHED' ? 'publish' : 'unpublish';
-  await Api.patch(`/products/${productId}/${endpoint}`, null, {
-    headers: { 'X-User-Id': companyId },
-  });
+  await Api.patch(`/products/${productId}/${endpoint}?companyId=${companyId}`);
 }
 
 export async function deleteProduct(id: string): Promise<void> {

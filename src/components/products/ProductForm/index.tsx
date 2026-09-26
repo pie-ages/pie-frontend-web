@@ -43,6 +43,7 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
   const [taxonomyStatus, setTaxonomyStatus] = useState<TaxonomyStatus>('loading');
   const [submitting, setSubmitting] = useState(false);
   const [submittingStatus, setSubmittingStatus] = useState<ProductStatus | null>(null);
+  const [togglingAvailability, setTogglingAvailability] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -160,6 +161,25 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
         id: 'delete-product-error',
       });
       setDeleting(false);
+    }
+  };
+
+  const handleToggleAvailability = async (targetStatus: ProductStatus) => {
+    if (!productId) return;
+    setTogglingAvailability(true);
+    try {
+      await updateProductAvailability(productId, targetStatus);
+      toast.success(
+        targetStatus === 'PUBLISHED'
+          ? 'Produto publicado na Vitrine.'
+          : 'Produto pausado na Vitrine.',
+      );
+      router.push('/products');
+    } catch {
+      toast.error('Não foi possível alterar a disponibilidade. Tente novamente.', {
+        id: 'product-availability-error',
+      });
+      setTogglingAvailability(false);
     }
   };
 
@@ -367,7 +387,7 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
                 <button
                   type="button"
                   className={styles.primaryButton}
-                  disabled={submitting || deleting}
+                  disabled={submitting || togglingAvailability || deleting}
                   onClick={() => submit(values.status)}
                 >
                   {submitting && submittingStatus === values.status
@@ -378,23 +398,19 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
                   <button
                     type="button"
                     className={styles.secondaryButton}
-                    disabled={submitting || deleting}
-                    onClick={() => submit('PAUSED')}
+                    disabled={submitting || togglingAvailability || deleting}
+                    onClick={() => handleToggleAvailability('PAUSED')}
                   >
-                    {submitting && submittingStatus === 'PAUSED'
-                      ? 'Pausando...'
-                      : 'Pausar na Vitrine'}
+                    {togglingAvailability ? 'Pausando...' : 'Pausar na Vitrine'}
                   </button>
                 ) : (
                   <button
                     type="button"
                     className={styles.secondaryButton}
-                    disabled={submitting || deleting}
-                    onClick={() => submit('PUBLISHED')}
+                    disabled={submitting || togglingAvailability || deleting}
+                    onClick={() => handleToggleAvailability('PUBLISHED')}
                   >
-                    {submitting && submittingStatus === 'PUBLISHED'
-                      ? 'Publicando...'
-                      : 'Publicar na Vitrine'}
+                    {togglingAvailability ? 'Publicando...' : 'Publicar na Vitrine'}
                   </button>
                 )}
               </>
@@ -409,7 +425,7 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
             <button
               type="button"
               className={styles.deleteButton}
-              disabled={submitting || deleting}
+              disabled={submitting || togglingAvailability || deleting}
               onClick={() => setShowDeleteConfirm(true)}
             >
               {deleting ? 'Excluindo...' : 'Excluir produto'}
