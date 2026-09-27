@@ -31,6 +31,7 @@ export function ProductImagesField({ images, onChange, error, hint }: ProductIma
       url: URL.createObjectURL(file),
       name: file.name,
       isPrimary: images.length === 0 && index === 0,
+      file,
     }));
 
     onChange([...images, ...newImages]);
@@ -135,7 +136,7 @@ export function ProductImagesField({ images, onChange, error, hint }: ProductIma
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept="image/jpeg,image/png,image/webp"
         multiple
         onChange={handleFilesSelected}
         className={styles.hiddenInput}

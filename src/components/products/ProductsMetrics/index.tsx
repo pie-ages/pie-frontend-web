@@ -1,17 +1,27 @@
 import styles from './styles.module.css';
 
-const EXAMPLE_METRICS = [
-  { label: 'Produtos publicados', value: '32' },
-  { label: 'Rascunhos', value: '6' },
-  { label: 'Salvos no closet', value: '1.204' },
-  { label: 'Cliques para a loja', value: '318' },
-];
+type ProductsMetricsProps = {
+  publishedCount: number | null;
+  draftCount: number | null;
+};
 
-export function ProductsMetrics() {
+function formatCount(count: number | null): string {
+  if (count === null) return '—';
+  return count.toLocaleString('pt-BR');
+}
+
+export function ProductsMetrics({ publishedCount, draftCount }: ProductsMetricsProps) {
+  const metrics = [
+    { label: 'Produtos publicados', value: formatCount(publishedCount) },
+    { label: 'Rascunhos', value: formatCount(draftCount) },
+    { label: 'Salvos no closet', value: '—' },
+    { label: 'Cliques para a loja', value: '—' },
+  ];
+
   return (
     <section className={styles.block} aria-label="Métricas de produtos">
       <div className={styles.grid}>
-        {EXAMPLE_METRICS.map((metric) => (
+        {metrics.map((metric) => (
           <div key={metric.label} className={styles.card}>
             <span className={styles.value}>{metric.value}</span>
             <span className={styles.label}>{metric.label}</span>

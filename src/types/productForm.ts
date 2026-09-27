@@ -5,6 +5,7 @@ export interface ProductImage {
   url: string;
   name: string;
   isPrimary: boolean;
+  file?: File;
 }
 
 export interface ProductFormValues {

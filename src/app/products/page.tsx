@@ -1,18 +1,20 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowUpFromLine, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Product, ProductFilters, ProductStatus } from '@/types/products';
 import {
   getProducts,
+  getProductCount,
   updateProductAvailability,
   deleteProduct,
   duplicateProduct,
 } from '@/lib/products/ProductsService';
 import { EMPTY_FILTERS, filterProducts, uniqueValues } from '@/lib/products/products.filters';
 import { getCompany } from '@/lib/company/CompanyService';
+import { useDebounce } from '@/hooks/useDebounce';
 import { ProductsMetrics } from '@/components/products/ProductsMetrics';
 import { ProductsFilter } from '@/components/products/ProductsFilter';
 import { ProductsTable } from '@/components/products/ProductsTable';
@@ -40,8 +42,13 @@ export default function ProductsPage() {
   const [pendingActionIds, setPendingActionIds] = useState<Set<string>>(new Set());
   const [productToRemove, setProductToRemove] = useState<Product | null>(null);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-  const [reloadKey, setReloadKey] = useState(0);
+  const [publishedCount, setPublishedCount] = useState<number | null>(null);
+  const [draftCount, setDraftCount] = useState<number | null>(null);
   const [companyName, setCompanyName] = useState('');
+
+  const isFirstLoad = useRef(true);
+  const [isFetching, setIsFetching] = useState(false);
+  const debouncedSearch = useDebounce(filters.search, 400);
 
   useEffect(() => {
     getCompany()
@@ -50,31 +57,48 @@ export default function ProductsPage() {
   }, []);
 
   useEffect(() => {
+    Promise.all([getProductCount('PUBLISHED'), getProductCount('DRAFT')])
+      .then(([pub, draft]) => {
+        setPublishedCount(pub);
+        setDraftCount(draft);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     let active = true;
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setStatus('loading');
+    if (isFirstLoad.current) {
+      setStatus('loading');
+    } else {
+      setIsFetching(true);
+    }
+
     getProducts({
-      search: filters.search,
+      search: debouncedSearch,
       status: filters.status,
       page: currentPage,
       size: perPage,
     })
       .then(({ items, total: serverTotal }) => {
         if (!active) return;
+        isFirstLoad.current = false;
         setProducts(items);
         setTotal(serverTotal);
         setStatus('ready');
+        setIsFetching(false);
       })
       .catch(() => {
         if (!active) return;
-        setStatus('error');
+        isFirstLoad.current = false;
+        setStatus((s) => (s === 'ready' ? 'ready' : 'error'));
+        setIsFetching(false);
       });
 
     return () => {
       active = false;
     };
-  }, [filters.search, filters.status, currentPage, perPage, reloadKey]);
+  }, [debouncedSearch, filters.status, currentPage, perPage]);
 
   const styleOptions = useMemo(() => uniqueValues(products, 'style'), [products]);
   const pieceOptions = useMemo(() => uniqueValues(products, 'piece'), [products]);
@@ -146,8 +170,18 @@ export default function ProductsPage() {
     try {
       await duplicateProduct(product.id);
       toast.success(`Cópia de "${product.name}" criada.`);
-      setCurrentPage(1);
-      setReloadKey((k) => k + 1);
+      if (currentPage === 1) {
+        const { items, total: serverTotal } = await getProducts({
+          search: filters.search,
+          status: filters.status,
+          page: 1,
+          size: perPage,
+        });
+        setProducts(items);
+        setTotal(serverTotal);
+      } else {
+        setCurrentPage(1);
+      }
     } catch {
       toast.error('Não foi possível duplicar o produto. Tente novamente.');
     } finally {
@@ -167,8 +201,8 @@ export default function ProductsPage() {
     try {
       await deleteProduct(target.id);
       toast.success(`"${target.name}" foi excluído.`);
-      setCurrentPage(1);
-      setReloadKey((k) => k + 1);
+      setProducts((current) => current.filter((p) => p.id !== target.id));
+      setTotal((t) => t - 1);
     } catch {
       toast.error('Não foi possível excluir o produto. Tente novamente.');
     } finally {
@@ -211,7 +245,7 @@ export default function ProductsPage() {
 
         {status === 'ready' && (
           <>
-            <ProductsMetrics />
+            <ProductsMetrics publishedCount={publishedCount} draftCount={draftCount} />
 
             <ProductsFilter
               filters={filters}
@@ -221,63 +255,65 @@ export default function ProductsPage() {
               onFiltersChange={applyFilters}
             />
 
-            {total === 0 && !hasActiveFilters && (
-              <p className={styles.notice}>Nenhum produto cadastrado ainda.</p>
-            )}
+            <div className={isFetching ? styles.tableFetching : undefined}>
+              {total === 0 && !hasActiveFilters && (
+                <p className={styles.notice}>Nenhum produto cadastrado ainda.</p>
+              )}
 
-            {((total === 0 && hasActiveFilters) ||
-              (total > 0 && filteredProducts.length === 0)) && (
-              <div className={styles.emptyState}>
-                <p>Nenhum produto encontrado com esses filtros.</p>
-                <button
-                  type="button"
-                  className={styles.clearFilters}
-                  onClick={() => applyFilters(EMPTY_FILTERS)}
-                >
-                  Limpar filtros
-                </button>
-              </div>
-            )}
-
-            {filteredProducts.length > 0 && (
-              <div className={styles.tableSection}>
-                <ProductsTable
-                  products={filteredProducts}
-                  pendingAvailabilityIds={pendingAvailabilityIds}
-                  pendingActionIds={pendingActionIds}
-                  onToggleAvailability={requestAvailabilityChange}
-                  onDuplicate={handleDuplicate}
-                  onDelete={setProductToDelete}
-                />
-                <div className={styles.tableFooter}>
-                  <label className={styles.perPageLabel}>
-                    Exibindo
-                    <select
-                      className={styles.perPageSelect}
-                      value={perPage}
-                      onChange={(e) => {
-                        const n = Number(e.target.value);
-                        localStorage.setItem('products:perPage', String(n));
-                        setPerPage(n);
-                        setCurrentPage(1);
-                      }}
-                    >
-                      {PER_PAGE_OPTIONS.map((n) => (
-                        <option key={n} value={n}>
-                          {n}
-                        </option>
-                      ))}
-                    </select>
-                    por página
-                  </label>
-                  <ProductsPagination
-                    currentPage={safePage}
-                    totalPages={totalPages}
-                    onPageChange={changePage}
-                  />
+              {((total === 0 && hasActiveFilters) ||
+                (total > 0 && filteredProducts.length === 0)) && (
+                <div className={styles.emptyState}>
+                  <p>Nenhum produto encontrado com esses filtros.</p>
+                  <button
+                    type="button"
+                    className={styles.clearFilters}
+                    onClick={() => applyFilters(EMPTY_FILTERS)}
+                  >
+                    Limpar filtros
+                  </button>
                 </div>
-              </div>
-            )}
+              )}
+
+              {filteredProducts.length > 0 && (
+                <div className={styles.tableSection}>
+                  <ProductsTable
+                    products={filteredProducts}
+                    pendingAvailabilityIds={pendingAvailabilityIds}
+                    pendingActionIds={pendingActionIds}
+                    onToggleAvailability={requestAvailabilityChange}
+                    onDuplicate={handleDuplicate}
+                    onDelete={setProductToDelete}
+                  />
+                  <div className={styles.tableFooter}>
+                    <label className={styles.perPageLabel}>
+                      Exibindo
+                      <select
+                        className={styles.perPageSelect}
+                        value={perPage}
+                        onChange={(e) => {
+                          const n = Number(e.target.value);
+                          localStorage.setItem('products:perPage', String(n));
+                          setPerPage(n);
+                          setCurrentPage(1);
+                        }}
+                      >
+                        {PER_PAGE_OPTIONS.map((n) => (
+                          <option key={n} value={n}>
+                            {n}
+                          </option>
+                        ))}
+                      </select>
+                      por página
+                    </label>
+                    <ProductsPagination
+                      currentPage={safePage}
+                      totalPages={totalPages}
+                      onPageChange={changePage}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </>
         )}
       </main>
