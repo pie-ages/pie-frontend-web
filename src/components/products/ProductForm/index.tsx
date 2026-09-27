@@ -12,6 +12,8 @@ import {
   updateProduct,
   updateProductAvailability,
   deleteProduct,
+  uploadProductImage,
+  deleteProductImage,
 } from '@/lib/products/ProductsService';
 import {
   filterPriceInput,
@@ -46,6 +48,7 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
   const [togglingAvailability, setTogglingAvailability] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
 
   const fetchTaxonomy = useCallback(() => {
     let cancelled = false;
@@ -76,6 +79,18 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
   const updateField = <K extends keyof ProductFormValues>(key: K, value: ProductFormValues[K]) => {
     setValues((prev) => ({ ...prev, [key]: value }));
     setErrors((prev) => ({ ...prev, [key]: undefined }));
+  };
+
+  const handleImagesChange = (newImages: ProductFormValues['images']) => {
+    if (mode === 'edit') {
+      const removed = values.images.filter(
+        (img) => !img.file && !newImages.some((n) => n.id === img.id),
+      );
+      if (removed.length > 0) {
+        setDeletedImageIds((prev) => [...prev, ...removed.map((img) => img.id)]);
+      }
+    }
+    updateField('images', newImages);
   };
 
   const toggleSize = (id: string) => {
@@ -129,6 +144,14 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
       } else {
         await updateProduct(productId!, payload);
         savedId = productId!;
+        for (const imageId of deletedImageIds) {
+          await deleteProductImage(savedId, imageId);
+        }
+      }
+
+      const newImages = payload.images.filter((img) => img.file);
+      for (const img of newImages) {
+        await uploadProductImage(savedId, img.file!);
       }
 
       const originalStatus = mode === 'create' ? 'DRAFT' : initialValues.status;
@@ -192,7 +215,7 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
         <div className={styles.layout}>
           <ProductImagesField
             images={values.images}
-            onChange={(images) => updateField('images', images)}
+            onChange={handleImagesChange}
             error={errors.images}
             hint={
               mode === 'create'

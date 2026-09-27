@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getCompany } from '@/lib/company/CompanyService';
+import { clearToken } from '@/lib/auth/AuthService';
 import styles from './styles.module.css';
 
 const NAV_ITEMS = [
@@ -69,7 +70,14 @@ export function StoreHeader() {
             <span className={styles.accountName}>{companyName}</span>
             <span className={styles.accountEmail}>{companyEmail}</span>
           </div>
-          <button type="button" className={styles.signOutButton}>
+          <button
+            type="button"
+            className={styles.signOutButton}
+            onClick={() => {
+              clearToken();
+              router.push('/login');
+            }}
+          >
             Sair
           </button>
         </div>

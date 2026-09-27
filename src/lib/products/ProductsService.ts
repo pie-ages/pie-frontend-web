@@ -36,6 +36,12 @@ interface ApiProductDetail {
   styles: string[] | null;
   sizes: string[] | null;
   materials: string[] | null;
+  images: Array<{
+    id: string;
+    url: string;
+    isPrimary: boolean;
+    displayOrder: number;
+  }> | null;
 }
 
 interface ApiProductsPage {
@@ -96,14 +102,15 @@ export async function updateProductAvailability(
   await Api.patch(`/products/${productId}/${endpoint}?companyId=${companyId}`);
 }
 
-export async function deleteProduct(id: string): Promise<void> {
-  await Api.delete(`/products/${id}`);
+export async function getProductCount(status: ProductStatus): Promise<number> {
+  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
+  const qs = new URLSearchParams({ status, size: '1', page: '0' });
+  const { data } = await Api.get<ApiProductsPage>(`/products/company/${companyId}?${qs}`);
+  return data.total;
 }
 
-export async function duplicateProduct(id: string): Promise<{ id: string }> {
-  const formData = await getProductFormData(id);
-  if (!formData) throw new Error('Produto não encontrado');
-  return createProduct({ ...formData.values, name: `Cópia de ${formData.values.name}` });
+export async function deleteProduct(id: string): Promise<void> {
+  await Api.delete(`/products/${id}`);
 }
 
 function findTermId(terms: TaxonomyTerm[], idOrName: string | null | undefined): string {
@@ -139,9 +146,14 @@ export async function getProductFormData(id: string): Promise<ProductFormData | 
       styleId: findTermId(taxonomy.styles, p.styles?.[0]),
       materialIds: (p.materials ?? []).map((m) => m.toLowerCase()),
       sizeIds: (p.sizes ?? []).map((s) => s.toLowerCase()),
-      images: p.imageUrl
-        ? [{ id: `${p.id}-img-1`, url: p.imageUrl, name: `${p.id}-01.jpg`, isPrimary: true }]
-        : [],
+      images: (p.images ?? [])
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+        .map((img) => ({
+          id: img.id,
+          url: img.url,
+          name: img.url.split('/').pop() ?? 'image',
+          isPrimary: img.isPrimary,
+        })),
       status: p.status,
     };
     return { code: p.id, updatedAt: p.updatedAt ?? p.createdAt, savedCount: 0, values };
@@ -151,7 +163,10 @@ export async function getProductFormData(id: string): Promise<ProductFormData | 
   }
 }
 
-export async function createProduct(values: ProductFormValues): Promise<{ id: string }> {
+export async function createProduct(
+  values: ProductFormValues,
+  options?: { imageUrl?: string | null },
+): Promise<{ id: string }> {
   const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
   const { data } = await Api.post<{ id: string }>('/products', {
     name: values.name,
@@ -162,14 +177,25 @@ export async function createProduct(values: ProductFormValues): Promise<{ id: st
     materials: values.materialIds,
     sizes: values.sizeIds,
     price: parseFloat(values.price.replace(',', '.')),
-    imageUrl: values.images[0]?.url ?? null,
+    imageUrl: options?.imageUrl ?? null,
     purchaseUrl: values.purchaseUrl || null,
     companyId,
   });
   return data;
 }
 
+export async function duplicateProduct(id: string): Promise<{ id: string }> {
+  const formData = await getProductFormData(id);
+  if (!formData) throw new Error('Produto não encontrado');
+  const imageUrl = formData.values.images[0]?.url ?? null;
+  return createProduct(
+    { ...formData.values, name: `Cópia de ${formData.values.name}` },
+    { imageUrl },
+  );
+}
+
 export async function updateProduct(id: string, values: ProductFormValues): Promise<void> {
+  const firstRealImage = values.images.find((img) => !img.file);
   await Api.put(`/products/${id}`, {
     name: values.name || null,
     description: values.description || null,
@@ -179,8 +205,20 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
     materials: values.materialIds,
     sizes: values.sizeIds.length > 0 ? values.sizeIds : null,
     price: values.price ? parseFloat(values.price.replace(',', '.')) : null,
-    imageUrl: values.images[0]?.url ?? null,
+    imageUrl: firstRealImage?.url ?? null,
     purchaseUrl: values.purchaseUrl || null,
     companyId: null,
   });
+}
+
+export async function uploadProductImage(productId: string, file: File): Promise<void> {
+  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
+  const form = new FormData();
+  form.append('file', file);
+  await Api.post(`/products/${productId}/images?companyId=${companyId}`, form);
+}
+
+export async function deleteProductImage(productId: string, imageId: string): Promise<void> {
+  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
+  await Api.delete(`/products/${productId}/images/${imageId}?companyId=${companyId}`);
 }
