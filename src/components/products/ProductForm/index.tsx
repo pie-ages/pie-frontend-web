@@ -145,7 +145,7 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
         await updateProduct(productId!, payload);
         savedId = productId!;
         for (const imageId of deletedImageIds) {
-          await deleteProductImage(savedId, imageId);
+          if (imageId) await deleteProductImage(savedId, imageId);
         }
       }
 

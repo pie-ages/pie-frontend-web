@@ -146,14 +146,26 @@ export async function getProductFormData(id: string): Promise<ProductFormData | 
       styleId: findTermId(taxonomy.styles, p.styles?.[0]),
       materialIds: (p.materials ?? []).map((m) => m.toLowerCase()),
       sizeIds: (p.sizes ?? []).map((s) => s.toLowerCase()),
-      images: (p.images ?? [])
-        .sort((a, b) => a.displayOrder - b.displayOrder)
-        .map((img) => ({
-          id: img.id,
-          url: img.url,
-          name: img.url.split('/').pop() ?? 'image',
-          isPrimary: img.isPrimary,
-        })),
+      images:
+        p.images && p.images.length > 0
+          ? p.images
+              .sort((a, b) => a.displayOrder - b.displayOrder)
+              .map((img) => ({
+                id: img.id,
+                url: img.url,
+                name: img.url.split('/').pop() ?? 'image',
+                isPrimary: img.isPrimary,
+              }))
+          : p.imageUrl
+            ? [
+                {
+                  id: '',
+                  url: p.imageUrl,
+                  name: p.imageUrl.split('/').pop() ?? 'image',
+                  isPrimary: true,
+                },
+              ]
+            : [],
       status: p.status,
     };
     return { code: p.id, updatedAt: p.updatedAt ?? p.createdAt, savedCount: 0, values };
