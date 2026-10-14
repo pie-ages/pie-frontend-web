@@ -1,0 +1,14 @@
+.git
+.github
+.husky
+.next
+node_modules
+coverage
+out
+*.log
+.env*
+!.env.example
+Dockerfile
+README.md
+docs
+.vscode
