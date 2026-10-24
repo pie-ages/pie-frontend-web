@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { getCompany } from '@/lib/company/CompanyService';
-import { clearToken } from '@/lib/auth/AuthService';
+import { useAuth } from '@/contexts/AuthContext';
 import styles from './styles.module.css';
 
 const NAV_ITEMS = [
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
 export function StoreHeader() {
   const pathname = usePathname();
   const router = useRouter();
+  const { signOut } = useAuth();
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
 
@@ -73,8 +74,8 @@ export function StoreHeader() {
           <button
             type="button"
             className={styles.signOutButton}
-            onClick={() => {
-              clearToken();
+            onClick={async () => {
+              await signOut();
               router.push('/login');
             }}
           >

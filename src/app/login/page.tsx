@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { Eye, EyeOff } from 'lucide-react';
@@ -10,14 +10,21 @@ import FormHeader from '@/components/ui/FormHeader';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import FormFooterLink from '@/components/ui/FormFooterLink';
-import { login, saveToken } from '@/lib/auth/AuthService';
+import { useAuth } from '@/contexts/AuthContext';
 
 import styles from './login.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { signIn, isAuthenticated, isInitializing } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  useEffect(() => {
+    if (!isInitializing && isAuthenticated) {
+      router.replace('/products');
+    }
+  }, [isAuthenticated, isInitializing, router]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -47,8 +54,7 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const { token } = await login(formData.email, formData.senha);
-      saveToken(token);
+      await signIn(formData.email, formData.senha);
       toast.success('Login realizado com sucesso!');
       router.push('/products');
     } catch {
