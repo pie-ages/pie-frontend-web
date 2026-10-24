@@ -4,14 +4,34 @@ interface ApiCompany {
   id: string;
   name: string;
   email: string;
+  role: string;
+  status: string;
 }
 
-let cache: ApiCompany | null = null;
+export interface AdminCompany {
+  id: string;
+  name: string;
+  cnpj: string;
+  email: string;
+  role: string;
+  status: string;
+  createdAt: string;
+}
 
-export async function getCompany(): Promise<ApiCompany> {
-  if (cache) return cache;
-  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
+export async function getCompany(companyId: string): Promise<ApiCompany> {
   const { data } = await Api.get<ApiCompany>(`/companies/${companyId}`);
-  cache = data;
-  return cache;
+  return data;
+}
+
+export async function getCompanies(status?: string): Promise<AdminCompany[]> {
+  const url = status ? `/companies?status=${status}` : '/companies';
+  const { data } = await Api.get<AdminCompany[]>(url);
+  return data;
+}
+
+export async function updateCompanyStatus(
+  companyId: string,
+  status: 'ACTIVE' | 'INACTIVE',
+): Promise<void> {
+  await Api.patch(`/companies/${companyId}/status`, { status });
 }

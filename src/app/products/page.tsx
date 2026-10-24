@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowUpFromLine, Plus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -13,7 +13,7 @@ import {
   duplicateProduct,
 } from '@/lib/products/ProductsService';
 import { EMPTY_FILTERS, filterProducts, uniqueValues } from '@/lib/products/products.filters';
-import { getCompany } from '@/lib/company/CompanyService';
+import { useAuth } from '@/contexts/AuthContext';
 import { useDebounce } from '@/hooks/useDebounce';
 import { ProductsMetrics } from '@/components/products/ProductsMetrics';
 import { ProductsFilter } from '@/components/products/ProductsFilter';
@@ -28,6 +28,8 @@ type Status = 'loading' | 'error' | 'ready';
 const PER_PAGE_OPTIONS = [5, 10, 20];
 
 export default function ProductsPage() {
+  const { user } = useAuth();
+  const companyId = user?.id ?? '';
   const [status, setStatus] = useState<Status>('loading');
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState(0);
@@ -44,29 +46,28 @@ export default function ProductsPage() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [publishedCount, setPublishedCount] = useState<number | null>(null);
   const [draftCount, setDraftCount] = useState<number | null>(null);
-  const [companyName, setCompanyName] = useState('');
 
   const isFirstLoad = useRef(true);
   const [isFetching, setIsFetching] = useState(false);
   const debouncedSearch = useDebounce(filters.search, 400);
 
-  useEffect(() => {
-    getCompany()
-      .then((c) => setCompanyName(c.name))
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    Promise.all([getProductCount('PUBLISHED'), getProductCount('DRAFT')])
+  const refreshCounts = useCallback(() => {
+    if (!companyId) return;
+    Promise.all([getProductCount(companyId, 'PUBLISHED'), getProductCount(companyId, 'DRAFT')])
       .then(([pub, draft]) => {
         setPublishedCount(pub);
         setDraftCount(draft);
       })
       .catch(() => {});
-  }, []);
+  }, [companyId]);
+
+  useEffect(() => {
+    refreshCounts();
+  }, [refreshCounts]);
 
   useEffect(() => {
     let active = true;
+    if (!companyId) return;
 
     if (isFirstLoad.current) {
       setStatus('loading');
@@ -74,7 +75,7 @@ export default function ProductsPage() {
       setIsFetching(true);
     }
 
-    getProducts({
+    getProducts(companyId, {
       search: debouncedSearch,
       status: filters.status,
       page: currentPage,
@@ -98,7 +99,7 @@ export default function ProductsPage() {
     return () => {
       active = false;
     };
-  }, [debouncedSearch, filters.status, currentPage, perPage]);
+  }, [companyId, debouncedSearch, filters.status, currentPage, perPage]);
 
   const styleOptions = useMemo(() => uniqueValues(products, 'style'), [products]);
   const pieceOptions = useMemo(() => uniqueValues(products, 'piece'), [products]);
@@ -128,7 +129,7 @@ export default function ProductsPage() {
     setPendingAvailabilityIds((current) => new Set(current).add(product.id));
 
     try {
-      await updateProductAvailability(product.id, nextStatus);
+      await updateProductAvailability(product.id, nextStatus, companyId);
       setProducts((current) =>
         current.map((item) => (item.id === product.id ? { ...item, status: nextStatus } : item)),
       );
@@ -137,6 +138,7 @@ export default function ProductsPage() {
           ? `${product.name} disponibilizado no catálogo.`
           : `${product.name} retirado do catálogo.`,
       );
+      refreshCounts();
     } catch {
       toast.error('Não foi possível atualizar a disponibilidade. Tente novamente.', {
         id: `availability-error-${product.id}`,
@@ -168,10 +170,11 @@ export default function ProductsPage() {
   const handleDuplicate = async (product: Product) => {
     setPendingActionIds((current) => new Set(current).add(product.id));
     try {
-      await duplicateProduct(product.id);
+      await duplicateProduct(product.id, companyId);
       toast.success(`Cópia de "${product.name}" criada.`);
+      refreshCounts();
       if (currentPage === 1) {
-        const { items, total: serverTotal } = await getProducts({
+        const { items, total: serverTotal } = await getProducts(companyId, {
           search: filters.search,
           status: filters.status,
           page: 1,
@@ -203,6 +206,7 @@ export default function ProductsPage() {
       toast.success(`"${target.name}" foi excluído.`);
       setProducts((current) => current.filter((p) => p.id !== target.id));
       setTotal((t) => t - 1);
+      refreshCounts();
     } catch {
       toast.error('Não foi possível excluir o produto. Tente novamente.');
     } finally {
@@ -220,7 +224,7 @@ export default function ProductsPage() {
       <main className={styles.container}>
         <header className={styles.header}>
           <div>
-            <p className={styles.pretitle}>{companyName}</p>
+            <p className={styles.pretitle}>{user?.name ?? ''}</p>
             <h1 className={styles.title}>Produtos</h1>
           </div>
           <div className={styles.actions}>

@@ -56,13 +56,15 @@ export interface ProductsPage {
   total: number;
 }
 
-export async function getProducts(params?: {
-  search?: string;
-  status?: ProductStatus | '';
-  page?: number;
-  size?: number;
-}): Promise<ProductsPage> {
-  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
+export async function getProducts(
+  companyId: string,
+  params?: {
+    search?: string;
+    status?: ProductStatus | '';
+    page?: number;
+    size?: number;
+  },
+): Promise<ProductsPage> {
   const qs = new URLSearchParams();
   qs.set('sort', 'updatedAt,desc');
   if (params?.search) qs.set('search', params.search);
@@ -96,14 +98,13 @@ export async function getProducts(params?: {
 export async function updateProductAvailability(
   productId: string,
   status: ProductStatus,
+  companyId: string,
 ): Promise<void> {
-  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
   const endpoint = status === 'PUBLISHED' ? 'publish' : 'unpublish';
   await Api.patch(`/products/${productId}/${endpoint}?companyId=${companyId}`);
 }
 
-export async function getProductCount(status: ProductStatus): Promise<number> {
-  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
+export async function getProductCount(companyId: string, status: ProductStatus): Promise<number> {
   const qs = new URLSearchParams({ status, size: '1', page: '0' });
   const { data } = await Api.get<ApiProductsPage>(`/products/company/${companyId}?${qs}`);
   return data.total;
@@ -177,9 +178,9 @@ export async function getProductFormData(id: string): Promise<ProductFormData | 
 
 export async function createProduct(
   values: ProductFormValues,
+  companyId: string,
   options?: { imageUrl?: string | null },
 ): Promise<{ id: string }> {
-  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
   const { data } = await Api.post<{ id: string }>('/products', {
     name: values.name,
     description: values.description || null,
@@ -196,12 +197,13 @@ export async function createProduct(
   return data;
 }
 
-export async function duplicateProduct(id: string): Promise<{ id: string }> {
+export async function duplicateProduct(id: string, companyId: string): Promise<{ id: string }> {
   const formData = await getProductFormData(id);
   if (!formData) throw new Error('Produto não encontrado');
   const imageUrl = formData.values.images[0]?.url ?? null;
   return createProduct(
     { ...formData.values, name: `Cópia de ${formData.values.name}` },
+    companyId,
     { imageUrl },
   );
 }
@@ -223,14 +225,20 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
   });
 }
 
-export async function uploadProductImage(productId: string, file: File): Promise<void> {
-  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
+export async function uploadProductImage(
+  productId: string,
+  file: File,
+  companyId: string,
+): Promise<void> {
   const form = new FormData();
   form.append('file', file);
   await Api.post(`/products/${productId}/images?companyId=${companyId}`, form);
 }
 
-export async function deleteProductImage(productId: string, imageId: string): Promise<void> {
-  const companyId = process.env.NEXT_PUBLIC_COMPANY_ID;
+export async function deleteProductImage(
+  productId: string,
+  imageId: string,
+  companyId: string,
+): Promise<void> {
   await Api.delete(`/products/${productId}/images/${imageId}?companyId=${companyId}`);
 }
