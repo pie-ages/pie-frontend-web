@@ -5,7 +5,7 @@ import type { LoginResponse } from '@/shared/auth';
 import { clearSession, saveSession } from '@/utils/auth-storage';
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
-  const { data } = await axios.post<LoginResponse>(`${Api.defaults.baseURL}/auth/company/login`, {
+  const { data } = await axios.post<LoginResponse>(`${Api.defaults.baseURL}/auth/login`, {
     email,
     password,
   });
