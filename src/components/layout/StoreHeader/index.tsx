@@ -1,33 +1,27 @@
 'use client';
-import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
-import { getCompany } from '@/lib/company/CompanyService';
 import { useAuth } from '@/contexts/AuthContext';
 import styles from './styles.module.css';
 
-const NAV_ITEMS = [
+const COMPANY_NAV_ITEMS = [
   { label: 'Produtos', redirect: '/products' },
   { label: 'Importar', redirect: '/import' },
-  { label: 'Solicitações', redirect: '/store-requests' },
 ];
+
+const ADMIN_NAV_ITEMS = [{ label: 'Empresas', redirect: '/admin' }];
 
 export function StoreHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { signOut } = useAuth();
-  const [companyName, setCompanyName] = useState('');
-  const [companyEmail, setCompanyEmail] = useState('');
+  const { user, signOut } = useAuth();
 
-  useEffect(() => {
-    getCompany()
-      .then((c) => {
-        setCompanyName(c.name);
-        setCompanyEmail(c.email);
-      })
-      .catch(() => {});
-  }, []);
+  const displayName = user?.name ?? '';
+  const displayEmail = user?.email ?? '';
+  const isAdmin = user?.role === 'ADMIN';
 
-  const initials = companyName
+  const navItems = isAdmin ? ADMIN_NAV_ITEMS : COMPANY_NAV_ITEMS;
+
+  const initials = displayName
     .split(' ')
     .slice(0, 2)
     .map((w) => w[0])
@@ -41,11 +35,11 @@ export function StoreHeader() {
           <div className={styles.brand}>
             <span className={styles.logoMark} aria-hidden="true" />
             <span className={styles.logoText}>Piê</span>
-            <span className={styles.logoSubtitle}>PAINEL DA LOJA</span>
+            <span className={styles.logoSubtitle}>{isAdmin ? 'ADMIN' : 'PAINEL DA LOJA'}</span>
           </div>
 
           <nav className={styles.nav} aria-label="Navegação do painel">
-            {NAV_ITEMS.map((item) => (
+            {navItems.map((item) => (
               <span
                 key={item.label}
                 className={`${styles.navItem} ${
@@ -68,8 +62,8 @@ export function StoreHeader() {
             {initials}
           </span>
           <div className={styles.accountInfo}>
-            <span className={styles.accountName}>{companyName}</span>
-            <span className={styles.accountEmail}>{companyEmail}</span>
+            <span className={styles.accountName}>{displayName}</span>
+            <span className={styles.accountEmail}>{displayEmail}</span>
           </div>
           <button
             type="button"

@@ -54,9 +54,15 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await signIn(formData.email, formData.senha);
+      const sessionUser = await signIn(formData.email, formData.senha);
       toast.success('Login realizado com sucesso!');
-      router.push('/products');
+      if (sessionUser?.status === 'PENDING') {
+        router.push('/pending');
+      } else if (sessionUser?.role === 'ADMIN') {
+        router.push('/admin');
+      } else {
+        router.push('/products');
+      }
     } catch {
       toast.error('E-mail ou senha inválidos.', { id: 'login-error' });
     } finally {

@@ -9,7 +9,7 @@ export async function login(email: string, password: string): Promise<LoginRespo
     email,
     password,
   });
-  saveSession(data.accessToken, data.refreshToken, data.expiresIn);
+  saveSession(data.accessToken, data.refreshToken, data.expiresIn, data.user?.role);
   return data;
 }
 
@@ -17,7 +17,7 @@ export async function refresh(refreshToken: string): Promise<LoginResponse> {
   const { data } = await axios.post<LoginResponse>(`${Api.defaults.baseURL}/auth/refresh`, {
     refreshToken,
   });
-  saveSession(data.accessToken, data.refreshToken, data.expiresIn);
+  saveSession(data.accessToken, data.refreshToken, data.expiresIn, data.user?.role);
   return data;
 }
 

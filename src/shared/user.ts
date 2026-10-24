@@ -3,4 +3,6 @@ export interface User {
   name: string;
   email: string;
   photoUrl: string | null;
+  role?: 'COMPANY' | 'ADMIN';
+  status?: 'PENDING' | 'ACTIVE' | 'INACTIVE';
 }

@@ -11,7 +11,7 @@ type AuthContextValue = {
   user: User | null;
   isAuthenticated: boolean;
   isInitializing: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<User | null>;
   signOut: () => Promise<void>;
 };
 
@@ -62,10 +62,12 @@ export function AuthProvider({ children }: PropsWithChildren) {
     init();
   }, []);
 
-  async function signIn(email: string, password: string) {
+  async function signIn(email: string, password: string): Promise<User | null> {
     const data = await login(email, password);
-    setUser(data.user ?? null);
+    const sessionUser = data.user ?? null;
+    setUser(sessionUser);
     setAuthenticated(true);
+    return sessionUser;
   }
 
   async function signOut() {

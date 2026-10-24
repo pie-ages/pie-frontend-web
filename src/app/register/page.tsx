@@ -10,6 +10,7 @@ import FormHeader from '@/components/ui/FormHeader';
 import Input from '@/components/ui/Input';
 import Button from '@/components/ui/Button';
 import FormFooterLink from '@/components/ui/FormFooterLink';
+import Api from '@/lib/api';
 
 import styles from './register.module.css';
 
@@ -48,7 +49,7 @@ export default function RegisterPage() {
     toast.dismiss('register-error');
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const requiredFields = [
@@ -82,12 +83,25 @@ export default function RegisterPage() {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      console.log('Payload da API:', formData);
-      setIsLoading(false);
+    try {
+      await Api.post('/companies', {
+        name: formData.nome,
+        cnpj: formData.cnpj.replace(/\D/g, ''),
+        socialReason: formData.razaoSocial,
+        responsiblePerson: formData.responsavel,
+        email: formData.email,
+        website: formData.site || null,
+        password: formData.senha,
+      });
       toast.success('Pedido enviado para análise!');
       router.push('/login');
-    }, 2000);
+    } catch {
+      toast.error('Não foi possível enviar o pedido. Verifique os dados e tente novamente.', {
+        id: 'register-error',
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

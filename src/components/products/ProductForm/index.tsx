@@ -21,6 +21,7 @@ import {
   validateDraftForm,
   validateProductForm,
 } from '@/lib/products/product-form.validation';
+import { useAuth } from '@/contexts/AuthContext';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
 import Textarea from '@/components/ui/Textarea';
@@ -38,6 +39,8 @@ interface ProductFormProps {
 
 export function ProductForm({ mode, productId, initialValues }: ProductFormProps) {
   const router = useRouter();
+  const { user } = useAuth();
+  const companyId = user?.id ?? '';
 
   const [values, setValues] = useState<ProductFormValues>(initialValues);
   const [errors, setErrors] = useState<ProductFormErrors>({});
@@ -139,24 +142,24 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
     try {
       let savedId: string;
       if (mode === 'create') {
-        const result = await createProduct(payload);
+        const result = await createProduct(payload, companyId);
         savedId = result.id;
       } else {
         await updateProduct(productId!, payload);
         savedId = productId!;
         for (const imageId of deletedImageIds) {
-          if (imageId) await deleteProductImage(savedId, imageId);
+          if (imageId) await deleteProductImage(savedId, imageId, companyId);
         }
       }
 
       const newImages = payload.images.filter((img) => img.file);
       for (const img of newImages) {
-        await uploadProductImage(savedId, img.file!);
+        await uploadProductImage(savedId, img.file!, companyId);
       }
 
       const originalStatus = mode === 'create' ? 'DRAFT' : initialValues.status;
       if (targetStatus !== originalStatus && targetStatus !== 'DRAFT') {
-        await updateProductAvailability(savedId, targetStatus);
+        await updateProductAvailability(savedId, targetStatus, companyId);
       }
 
       toast.success(
@@ -191,7 +194,7 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
     if (!productId) return;
     setTogglingAvailability(true);
     try {
-      await updateProductAvailability(productId, targetStatus);
+      await updateProductAvailability(productId, targetStatus, companyId);
       toast.success(
         targetStatus === 'PUBLISHED'
           ? 'Produto publicado na Vitrine.'
