@@ -1,24 +1,27 @@
-import Api from '@/lib/api';
-import type { LoginRequest, LoginResponse } from '@/shared/auth';
+import axios from 'axios';
 
-const TOKEN_KEY = 'pie_auth_token';
+import Api from '@/lib/api';
+import type { LoginResponse } from '@/shared/auth';
+import { clearSession, saveSession } from '@/utils/auth-storage';
 
 export async function login(email: string, password: string): Promise<LoginResponse> {
-  const { data } = await Api.post<LoginResponse>('/auth/login', {
+  const { data } = await axios.post<LoginResponse>(`${Api.defaults.baseURL}/auth/login`, {
     email,
     password,
-  } satisfies LoginRequest);
+  });
+  saveSession(data.accessToken, data.refreshToken, data.expiresIn);
   return data;
 }
 
-export function saveToken(token: string): void {
-  localStorage.setItem(TOKEN_KEY, token);
+export async function refresh(refreshToken: string): Promise<LoginResponse> {
+  const { data } = await axios.post<LoginResponse>(`${Api.defaults.baseURL}/auth/refresh`, {
+    refreshToken,
+  });
+  saveSession(data.accessToken, data.refreshToken, data.expiresIn);
+  return data;
 }
 
-export function getToken(): string | null {
-  return localStorage.getItem(TOKEN_KEY);
-}
-
-export function clearToken(): void {
-  localStorage.removeItem(TOKEN_KEY);
+export async function logout(): Promise<void> {
+  await Api.post('/auth/logout').catch(() => {});
+  clearSession();
 }

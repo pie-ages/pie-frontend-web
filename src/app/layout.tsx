@@ -2,6 +2,8 @@ import { Archivo } from 'next/font/google';
 import '../styles/colors.css';
 import { Toaster } from 'sonner';
 
+import { AuthProvider } from '@/contexts/AuthContext';
+
 const archivo = Archivo({
   subsets: ['latin'],
   weight: ['400', '600', '700', '800'],
@@ -22,7 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           MozOsxFontSmoothing: 'grayscale',
         }}
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
         <Toaster richColors position="top-right" />
       </body>
     </html>
