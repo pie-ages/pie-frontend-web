@@ -16,15 +16,21 @@ import styles from './login.module.css';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { signIn, isAuthenticated, isInitializing } = useAuth();
+  const { signIn, isAuthenticated, isInitializing, user } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     if (!isInitializing && isAuthenticated) {
-      router.replace('/products');
+      if (user?.status === 'PENDING') {
+        router.replace('/pending');
+      } else if (user?.role === 'ADMIN') {
+        router.replace('/admin');
+      } else {
+        router.replace('/products');
+      }
     }
-  }, [isAuthenticated, isInitializing, router]);
+  }, [isAuthenticated, isInitializing, router, user]);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -54,15 +60,8 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const sessionUser = await signIn(formData.email, formData.senha);
+      await signIn(formData.email, formData.senha);
       toast.success('Login realizado com sucesso!');
-      if (sessionUser?.status === 'PENDING') {
-        router.push('/pending');
-      } else if (sessionUser?.role === 'ADMIN') {
-        router.push('/admin');
-      } else {
-        router.push('/products');
-      }
     } catch {
       toast.error('E-mail ou senha inválidos.', { id: 'login-error' });
     } finally {

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ArrowUpFromLine, Plus } from 'lucide-react';
 import { toast } from 'sonner';
@@ -51,7 +51,7 @@ export default function ProductsPage() {
   const [isFetching, setIsFetching] = useState(false);
   const debouncedSearch = useDebounce(filters.search, 400);
 
-  useEffect(() => {
+  const refreshCounts = useCallback(() => {
     if (!companyId) return;
     Promise.all([getProductCount(companyId, 'PUBLISHED'), getProductCount(companyId, 'DRAFT')])
       .then(([pub, draft]) => {
@@ -60,6 +60,10 @@ export default function ProductsPage() {
       })
       .catch(() => {});
   }, [companyId]);
+
+  useEffect(() => {
+    refreshCounts();
+  }, [refreshCounts]);
 
   useEffect(() => {
     let active = true;
@@ -134,6 +138,7 @@ export default function ProductsPage() {
           ? `${product.name} disponibilizado no catálogo.`
           : `${product.name} retirado do catálogo.`,
       );
+      refreshCounts();
     } catch {
       toast.error('Não foi possível atualizar a disponibilidade. Tente novamente.', {
         id: `availability-error-${product.id}`,
@@ -167,6 +172,7 @@ export default function ProductsPage() {
     try {
       await duplicateProduct(product.id, companyId);
       toast.success(`Cópia de "${product.name}" criada.`);
+      refreshCounts();
       if (currentPage === 1) {
         const { items, total: serverTotal } = await getProducts(companyId, {
           search: filters.search,
@@ -200,6 +206,7 @@ export default function ProductsPage() {
       toast.success(`"${target.name}" foi excluído.`);
       setProducts((current) => current.filter((p) => p.id !== target.id));
       setTotal((t) => t - 1);
+      refreshCounts();
     } catch {
       toast.error('Não foi possível excluir o produto. Tente novamente.');
     } finally {
