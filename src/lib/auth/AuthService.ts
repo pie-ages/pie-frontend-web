@@ -25,3 +25,29 @@ export async function logout(): Promise<void> {
   await Api.post('/auth/logout').catch(() => {});
   clearSession();
 }
+
+export async function requestPasswordRecovery(email: string): Promise<void> {
+  await axios.post(`${Api.defaults.baseURL}/auth/recover`, { email });
+}
+
+export async function verifyRecoveryCode(email: string, code: string): Promise<string> {
+  const { data } = await axios.post<LoginResponse>(`${Api.defaults.baseURL}/auth/recover/verify`, {
+    email,
+    code,
+  });
+  return data.accessToken;
+}
+
+export async function updatePassword(recoveryToken: string, password: string): Promise<void> {
+  await axios.put(
+    `${Api.defaults.baseURL}/auth/password`,
+    { password },
+    { headers: { Authorization: `Bearer ${recoveryToken}` } },
+  );
+}
+
+export async function revokeRecoverySession(recoveryToken: string): Promise<void> {
+  await axios.post(`${Api.defaults.baseURL}/auth/logout`, undefined, {
+    headers: { Authorization: `Bearer ${recoveryToken}` },
+  });
+}
