@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import type { Taxonomy } from '@/types/taxonomy';
+import { PRODUCT_GENDER_OPTIONS } from '@/types/productForm';
 import type { ProductFormErrors, ProductFormValues } from '@/types/productForm';
 import type { ProductStatus } from '@/types/products';
 import { getTaxonomy, SIZES_BY_CATEGORY } from '@/lib/taxonomy/TaxonomyService';
@@ -235,6 +236,21 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
               onChange={(event) => updateField('name', event.target.value)}
               error={errors.name}
               required
+            />
+
+            <Select
+              label="Gênero da peça"
+              aria-label="Gênero da peça"
+              options={PRODUCT_GENDER_OPTIONS}
+              value={values.gender}
+              showPlaceholder={initialValues.gender === ''}
+              onChange={(event) => {
+                const option = PRODUCT_GENDER_OPTIONS.find(
+                  ({ value }) => value === event.target.value,
+                );
+                updateField('gender', option?.value ?? '');
+              }}
+              disabled={submitting}
             />
 
             {taxonomyError && (
