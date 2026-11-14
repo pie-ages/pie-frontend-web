@@ -131,7 +131,7 @@ export default function LoginPage() {
         <FormFooterLink
           text="Esqueceu a senha?"
           linkText="Recuperar acesso"
-          href="/esqueci-senha"
+          href="/forgot-password"
         />
       </div>
     </AuthLayout>
