@@ -243,7 +243,6 @@ export function ProductForm({ mode, productId, initialValues }: ProductFormProps
               aria-label="Gênero da peça"
               options={PRODUCT_GENDER_OPTIONS}
               value={values.gender}
-              showPlaceholder={initialValues.gender === ''}
               onChange={(event) => {
                 const option = PRODUCT_GENDER_OPTIONS.find(
                   ({ value }) => value === event.target.value,
