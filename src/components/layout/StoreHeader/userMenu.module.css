@@ -1,0 +1,214 @@
+.wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  padding: 6px 14px 6px 6px;
+  border: 1px solid color-mix(in srgb, var(--color-border-default) 50%, transparent);
+  border-radius: 14px;
+  background: var(--color-background-default);
+  color: var(--color-text-secondary);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(32, 30, 29, 0.06);
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.trigger:hover {
+  background: var(--color-brand-primary-light);
+  border-color: color-mix(in srgb, var(--color-brand-primary) 40%, transparent);
+}
+
+.trigger:focus-visible,
+.trigger[aria-expanded='true'] {
+  background: var(--color-brand-primary-light);
+  border-color: var(--color-border-focus);
+  outline: none;
+}
+
+.triggerInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  max-width: 220px;
+  line-height: 1.3;
+}
+
+.triggerName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.triggerEmail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.chevron {
+  flex-shrink: 0;
+  color: var(--color-brand-primary);
+  transition: transform 0.15s;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 10px);
+  width: 300px;
+  padding: 8px;
+  border: 1px solid var(--color-background-subtle);
+  border-radius: 16px;
+  background: var(--color-background-default);
+  box-shadow: 0 16px 40px rgba(32, 30, 29, 0.18);
+  animation: pop 0.12s ease-out;
+}
+
+.menuHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  background: var(--color-brand-primary-light);
+}
+
+.menuInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.menuLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-brand-primary);
+}
+
+.menuName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.menuEmail {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.menuItem:hover,
+.menuItem:focus-visible {
+  background: var(--color-brand-primary-light);
+  color: var(--color-brand-primary);
+  outline: none;
+}
+
+.menuItemDanger:hover,
+.menuItemDanger:focus-visible {
+  background: var(--color-background-subtle);
+  color: var(--color-state-error);
+}
+
+.skeleton {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 14px 6px 6px;
+}
+
+.skeletonAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-background-subtle);
+}
+
+.skeletonLines {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.skeletonLine {
+  width: 120px;
+  height: 10px;
+  border-radius: 6px;
+  background: var(--color-background-subtle);
+}
+
+.skeletonLineShort {
+  width: 80px;
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .triggerInfo,
+  .skeletonLines {
+    display: none;
+  }
+
+  .trigger {
+    gap: 8px;
+    padding-right: 10px;
+  }
+
+  .menu {
+    width: min(300px, calc(100vw - 32px));
+  }
+}
