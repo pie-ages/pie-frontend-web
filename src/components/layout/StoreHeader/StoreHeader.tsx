@@ -63,7 +63,7 @@ export function StoreHeader() {
         <UserMenu
           name={user?.name ?? ''}
           email={user?.email ?? ''}
-          avatarUrl={user?.avatarUrl ?? null}
+          avatarUrl={user?.photoUrl ?? null}
           loading={!user}
           onSignOut={handleSignOut}
           onUpdateProfile={async () => {}}
