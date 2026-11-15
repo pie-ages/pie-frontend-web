@@ -1,6 +1,6 @@
 import type { AxiosError } from 'axios';
 import type { Product, ProductStatus } from '@/types/products';
-import type { ProductFormData, ProductFormValues } from '@/types/productForm';
+import type { ProductFormData, ProductFormValues, ProductGender } from '@/types/productForm';
 import type { TaxonomyTerm } from '@/types/taxonomy';
 import { getTaxonomy } from '@/lib/taxonomy/TaxonomyService';
 import Api from '@/lib/api';
@@ -23,6 +23,7 @@ interface ApiProduct {
 interface ApiProductDetail {
   id: string;
   name: string;
+  gender?: ProductGender | null;
   description: string | null;
   category: string | null;
   color: string | null;
@@ -138,6 +139,7 @@ export async function getProductFormData(id: string): Promise<ProductFormData | 
       getTaxonomy(),
     ]);
     const values: ProductFormValues = {
+      gender: p.gender ?? '',
       name: p.name,
       description: p.description ?? '',
       price: Number(p.price).toFixed(2).replace('.', ','),
@@ -183,6 +185,7 @@ export async function createProduct(
 ): Promise<{ id: string }> {
   const { data } = await Api.post<{ id: string }>('/products', {
     name: values.name,
+    ...(values.gender && { gender: values.gender }),
     description: values.description || null,
     category: values.categoryId || null,
     color: values.colorId || null,
@@ -212,6 +215,7 @@ export async function updateProduct(id: string, values: ProductFormValues): Prom
   const firstRealImage = values.images.find((img) => !img.file);
   await Api.put(`/products/${id}`, {
     name: values.name || null,
+    ...(values.gender && { gender: values.gender }),
     description: values.description || null,
     category: values.categoryId || null,
     color: values.colorId || null,
