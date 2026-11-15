@@ -1,6 +1,6 @@
-import type { ProductStatus } from '@/types/products';
+import type { ProductGender, ProductStatus } from '@/types/products';
 
-export type ProductGender = 'FEMININO' | 'MASCULINO' | 'UNISSEX';
+export type { ProductGender };
 
 export const PRODUCT_GENDER_OPTIONS: { value: ProductGender; label: string }[] = [
   { value: 'FEMININO', label: 'Feminino' },

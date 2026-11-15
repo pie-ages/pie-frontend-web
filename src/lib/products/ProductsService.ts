@@ -1,6 +1,6 @@
 import type { AxiosError } from 'axios';
-import type { Product, ProductStatus } from '@/types/products';
-import type { ProductFormData, ProductFormValues, ProductGender } from '@/types/productForm';
+import type { Product, ProductGender, ProductStatus } from '@/types/products';
+import type { ProductFormData, ProductFormValues } from '@/types/productForm';
 import type { TaxonomyTerm } from '@/types/taxonomy';
 import { getTaxonomy } from '@/lib/taxonomy/TaxonomyService';
 import Api from '@/lib/api';
@@ -8,6 +8,7 @@ import Api from '@/lib/api';
 interface ApiProduct {
   id: string;
   name: string;
+  gender?: ProductGender | null;
   category: string;
   color: string;
   price: number;
@@ -85,6 +86,7 @@ export async function getProducts(
       photoUrl: p.imageUrl ?? null,
       name: p.name,
       code: p.id.slice(0, 8).toUpperCase(),
+      gender: p.gender ?? null,
       piece: findTermName(taxonomy.categories, p.category),
       style: findTermName(taxonomy.styles, p.styles?.[0]),
       color: findTermName(taxonomy.colors, p.color),
