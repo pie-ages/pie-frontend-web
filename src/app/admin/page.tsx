@@ -5,7 +5,7 @@ import { Check, RefreshCw, X, Plus, FileText, Mail, Building2 } from 'lucide-rea
 import { toast } from 'sonner';
 import { CreateCompanyModal } from './CreateCompanyModal';
 import { getCompanies, updateCompanyStatus, type AdminCompany } from '@/lib/company/CompanyService';
-import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
+import { StoreHeader } from '@/components/layout/StoreHeader';
 import Button from '@/components/ui/Button';
 import styles from './page.module.css';
 
