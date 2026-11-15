@@ -1,10 +1,13 @@
 export type ProductStatus = 'PUBLISHED' | 'DRAFT' | 'PAUSED';
 
+export type ProductGender = 'FEMININO' | 'MASCULINO' | 'UNISSEX';
+
 export interface Product {
   id: string;
   photoUrl: string | null;
   name: string;
   code: string;
+  gender: ProductGender | null;
   piece: string;
   style: string;
   color: string;

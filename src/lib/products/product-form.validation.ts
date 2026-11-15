@@ -44,6 +44,10 @@ export function validateProductForm(values: ProductFormValues): ProductFormError
     errors.name = 'Informe o nome do produto.';
   }
 
+  if (!values.gender) {
+    errors.gender = 'Selecione o gênero da peça.';
+  }
+
   const price = parsePrice(values.price);
   if (!values.price.trim()) {
     errors.price = 'Informe o preço.';

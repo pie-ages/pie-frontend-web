@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import type { Product } from '@/types/products';
+import type { Product, ProductGender } from '@/types/products';
 import { Copy, Loader2, Pause, Pencil, Play, Trash2 } from 'lucide-react';
 import { StatusBadge } from '../StatusBadge';
 import styles from './styles.module.css';
@@ -8,6 +8,12 @@ const priceFormatter = new Intl.NumberFormat('pt-BR', {
   style: 'currency',
   currency: 'BRL',
 });
+
+const GENDER_LABEL: Record<ProductGender, string> = {
+  FEMININO: 'Feminino',
+  MASCULINO: 'Masculino',
+  UNISSEX: 'Unissex',
+};
 
 interface ProductsTableProps {
   products: Product[];
@@ -34,6 +40,7 @@ export function ProductsTable({
             <th className={styles.th}>Foto</th>
             <th className={styles.th}>Produto</th>
             <th className={styles.th}>Peça</th>
+            <th className={styles.th}>Gênero</th>
             <th className={styles.th}>Estilo</th>
             <th className={styles.th}>Cor</th>
             <th className={styles.th}>Tamanhos</th>
@@ -64,6 +71,9 @@ export function ProductsTable({
                   <span className={styles.code}>{product.code}</span>
                 </td>
                 <td className={`${styles.td} ${styles.softText}`}>{product.piece}</td>
+                <td className={`${styles.td} ${styles.softText}`}>
+                  {product.gender ? GENDER_LABEL[product.gender] : '—'}
+                </td>
                 <td className={styles.td}>
                   <span className={styles.styleChip}>{product.style}</span>
                 </td>
