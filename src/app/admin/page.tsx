@@ -1,10 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Check, RefreshCw, X } from 'lucide-react';
+import Link from 'next/link';
+import { Check, RefreshCw, UserPlus, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { getCompanies, updateCompanyStatus, type AdminCompany } from '@/lib/company/CompanyService';
 import { StoreHeader } from '@/components/layout/StoreHeader';
+import { useAuth } from '@/contexts/AuthContext';
 import styles from './page.module.css';
 
 type PageStatus = 'loading' | 'error' | 'ready';
@@ -24,6 +26,8 @@ const FILTERS: { key: FilterStatus; label: string }[] = [
 ];
 
 export default function AdminPage() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === 'ADMIN';
   const [pageStatus, setPageStatus] = useState<PageStatus>('loading');
   const [companies, setCompanies] = useState<AdminCompany[]>([]);
   const [filter, setFilter] = useState<FilterStatus>('PENDING');
@@ -107,8 +111,16 @@ export default function AdminPage() {
       <StoreHeader />
       <main className={styles.container}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Empresas</h1>
-          <p className={styles.subtitle}>Gerencie e aprove as lojas cadastradas na plataforma.</p>
+          <div>
+            <h1 className={styles.title}>Empresas</h1>
+            <p className={styles.subtitle}>Gerencie e aprove as lojas cadastradas na plataforma.</p>
+          </div>
+          {isAdmin && (
+            <Link href="/admin/new" className={styles.newAdminButton}>
+              <UserPlus size={16} />
+              Novo administrador
+            </Link>
+          )}
         </header>
 
         <div className={styles.statsBar}>
