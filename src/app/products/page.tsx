@@ -19,7 +19,7 @@ import { ProductsMetrics } from '@/components/products/ProductsMetrics';
 import { ProductsFilter } from '@/components/products/ProductsFilter';
 import { ProductsTable } from '@/components/products/ProductsTable';
 import { ProductsPagination } from '@/components/products/ProductsPagination';
-import { StoreHeader } from '@/components/layout/StoreHeader';
+import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import styles from './page.module.css';
 

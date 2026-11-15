@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { Upload } from 'lucide-react';
-import { StoreHeader } from '@/components/layout/StoreHeader';
+import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
 import styles from './page.module.css';
 
 type ImportState = 'idle' | 'uploading' | 'done';

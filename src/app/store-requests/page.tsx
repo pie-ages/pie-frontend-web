@@ -8,7 +8,7 @@ import {
   getStoreRequests,
   updateStoreRequestStatus,
 } from '@/lib/store-requests/StoreRequestsService';
-import { StoreHeader } from '@/components/layout/StoreHeader';
+import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
 import styles from './page.module.css';
 
 type Status = 'loading' | 'error' | 'ready';

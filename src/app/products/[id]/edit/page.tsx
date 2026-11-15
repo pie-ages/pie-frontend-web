@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { StoreHeader } from '@/components/layout/StoreHeader';
+import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
 import { StatusBadge } from '@/components/products/StatusBadge';
 import { ProductForm } from '@/components/products/ProductForm';
 import { getProductFormData, type ProductFormData } from '@/lib/products/ProductsService';

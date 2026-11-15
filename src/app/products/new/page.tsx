@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { StoreHeader } from '@/components/layout/StoreHeader';
+import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
 import { ProductForm } from '@/components/products/ProductForm';
 import { EMPTY_PRODUCT_FORM_VALUES } from '@/types/productForm';
 import styles from './page.module.css';
