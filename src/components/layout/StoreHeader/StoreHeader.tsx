@@ -3,7 +3,10 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
+import { uploadCompanyLogo } from '@/lib/company/CompanyService';
+import { type ProfileFormData } from './EditProfileModal';
 import { UserMenu } from './UserMenu';
 import styles from './storeHeader.module.css';
 
@@ -17,7 +20,7 @@ const ADMIN_NAV_ITEMS = [{ label: 'Empresas', href: '/admin' }];
 export function StoreHeader() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, signOut } = useAuth();
+  const { user, signOut, updateUser } = useAuth();
 
   const isAdmin = user?.role === 'ADMIN';
   const navItems = isAdmin ? ADMIN_NAV_ITEMS : COMPANY_NAV_ITEMS;
@@ -27,6 +30,27 @@ export function StoreHeader() {
   async function handleSignOut() {
     await signOut();
     router.push('/login');
+  }
+
+  async function handleUpdateProfile(data: ProfileFormData) {
+    if (!user) return;
+
+    if (data.avatar) {
+      try {
+        const { photo_url } = await uploadCompanyLogo(user.id, data.avatar);
+        const separator = photo_url.includes('?') ? '&' : '?';
+        updateUser({ photoUrl: `${photo_url}${separator}t=${Date.now()}` });
+        toast.success('Logo da empresa atualizada com sucesso!');
+      } catch (err) {
+        toast.error('Erro ao enviar a logo da empresa.');
+        throw err;
+      }
+      return;
+    }
+
+    if (data.removeAvatar) {
+      toast.info('A remoção da logo ainda não está disponível.');
+    }
   }
 
   return (
@@ -63,10 +87,10 @@ export function StoreHeader() {
         <UserMenu
           name={user?.name ?? ''}
           email={user?.email ?? ''}
-          avatarUrl={user?.avatarUrl ?? null}
+          avatarUrl={user?.photoUrl ?? null}
           loading={!user}
           onSignOut={handleSignOut}
-          onUpdateProfile={async () => {}}
+          onUpdateProfile={handleUpdateProfile}
         />
       </div>
     </header>
