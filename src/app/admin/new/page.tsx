@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { ChevronLeft, Eye, EyeOff, ShieldAlert } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
+import { StoreHeader } from '@/components/layout/StoreHeader';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import { createAdmin, getApiErrorMessage } from '@/lib/admin/AdminService';
