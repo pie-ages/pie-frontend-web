@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -34,15 +33,8 @@ export function StoreHeader() {
       <div className={styles.inner}>
         <div className={styles.left}>
           <Link href={isAdmin ? '/admin' : '/products'} className={styles.brand}>
-            <Image
-              src="/pie.svg"
-              alt="Piê"
-              width={96}
-              height={48}
-              priority
-              className={styles.logo}
-              style={{ width: 'auto' }}
-            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/pie.svg" alt="Piê" className={styles.logo} />
             <span className={styles.divider} aria-hidden="true" />
             <span className={styles.badge}>{isAdmin ? 'Admin' : 'Painel da loja'}</span>
           </Link>
