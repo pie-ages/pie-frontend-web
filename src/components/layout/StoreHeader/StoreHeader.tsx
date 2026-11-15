@@ -41,6 +41,7 @@ export function StoreHeader() {
               height={48}
               priority
               className={styles.logo}
+              style={{ width: 'auto' }}
             />
             <span className={styles.divider} aria-hidden="true" />
             <span className={styles.badge}>{isAdmin ? 'Admin' : 'Painel da loja'}</span>
