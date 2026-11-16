@@ -6,8 +6,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserMenu } from './UserMenu';
 import styles from './storeHeader.module.css';
 
-const COMPANY_NAV_ITEMS = [{ label: 'Produtos', href: '/products' }];
-
 const ADMIN_NAV_ITEMS = [{ label: 'Empresas', href: '/admin' }];
 
 export function StoreHeader() {
@@ -16,7 +14,6 @@ export function StoreHeader() {
   const { user, signOut } = useAuth();
 
   const isAdmin = user?.role === 'ADMIN';
-  const navItems = isAdmin ? ADMIN_NAV_ITEMS : COMPANY_NAV_ITEMS;
 
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
 
@@ -36,18 +33,22 @@ export function StoreHeader() {
             <span className={styles.badge}>{isAdmin ? 'Admin' : 'Painel da loja'}</span>
           </Link>
 
-          <nav className={styles.nav} aria-label="Navegação do painel">
-            {navItems.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`${styles.navItem} ${isActive(item.href) ? styles.navItemActive : ''}`}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-              >
-                {item.label}
-              </Link>
-            ))}
-          </nav>
+          {isAdmin ? (
+            <nav className={styles.nav} aria-label="Navegação do painel">
+              {ADMIN_NAV_ITEMS.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`${styles.navItem} ${isActive(item.href) ? styles.navItemActive : ''}`}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          ) : (
+            <span className={`${styles.navItem} ${styles.navItemActive}`}>Produtos</span>
+          )}
         </div>
 
         <UserMenu
