@@ -42,22 +42,28 @@ export async function updateCompanyStatus(
   await Api.patch(`/companies/${companyId}/status`, { status });
 }
 
+export async function updateCompany(
+  companyId: string,
+  data: { name: string; email: string },
+): Promise<ApiCompany> {
+  const { data: res } = await Api.put<ApiCompany>(`/companies/${companyId}`, data);
+  return res;
+}
+
 export async function uploadCompanyLogo(
   companyId: string,
   file: File,
 ): Promise<UploadCompanyLogoResponse> {
   const formData = new FormData();
   formData.append('file', file);
-
   const { data } = await Api.post<UploadCompanyLogoResponse>(
     `/companies/${companyId}/logo`,
     formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
+    { headers: { 'Content-Type': 'multipart/form-data' } },
   );
-
   return data;
+}
+
+export async function removeCompanyLogo(companyId: string): Promise<void> {
+  await Api.delete(`/companies/${companyId}/logo`);
 }
