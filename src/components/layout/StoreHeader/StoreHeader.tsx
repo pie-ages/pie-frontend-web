@@ -33,7 +33,7 @@ export function StoreHeader() {
             <span className={styles.badge}>{isAdmin ? 'Admin' : 'Painel da loja'}</span>
           </Link>
 
-          {isAdmin ? (
+          {isAdmin && (
             <nav className={styles.nav} aria-label="Navegação do painel">
               {ADMIN_NAV_ITEMS.map((item) => (
                 <Link
@@ -46,8 +46,6 @@ export function StoreHeader() {
                 </Link>
               ))}
             </nav>
-          ) : (
-            <span className={styles.navLabel}>Produtos</span>
           )}
         </div>
 
