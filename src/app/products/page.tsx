@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpFromLine, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Product, ProductFilters, ProductStatus } from '@/types/products';
 import {
@@ -228,10 +228,6 @@ export default function ProductsPage() {
             <h1 className={styles.title}>Produtos</h1>
           </div>
           <div className={styles.actions}>
-            <button type="button" className={styles.secondaryButton}>
-              <ArrowUpFromLine size={16} style={{ color: 'inherit' }} />
-              Importar CSV
-            </button>
             <Link href="/products/new" className={styles.primaryButton}>
               <Plus size={16} style={{ color: 'inherit' }} />
               Novo produto

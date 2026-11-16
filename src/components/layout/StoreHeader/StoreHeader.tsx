@@ -6,10 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserMenu } from './UserMenu';
 import styles from './storeHeader.module.css';
 
-const COMPANY_NAV_ITEMS = [
-  { label: 'Produtos', href: '/products' },
-  { label: 'Importar', href: '/import' },
-];
+const COMPANY_NAV_ITEMS = [{ label: 'Produtos', href: '/products' }];
 
 const ADMIN_NAV_ITEMS = [{ label: 'Empresas', href: '/admin' }];
 
