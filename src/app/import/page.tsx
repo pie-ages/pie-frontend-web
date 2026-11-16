@@ -1,41 +1,14 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { Upload } from 'lucide-react';
+import { Upload, Link } from 'lucide-react';
 import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
+import { getApiErrorMessage } from '@/utils/api-error';
+import { importProductsCsv, downloadImportTemplate } from '@/lib/products/ProductsService';
+import type { CsvImportResult } from '@/types/products';
 import styles from './page.module.css';
-
-type ImportState = 'idle' | 'uploading' | 'done';
-
-interface ErrorRow {
-  line: number;
-  column: string;
-  value: string;
-  problem: string;
-}
-
-interface ImportResult {
-  filename: string;
-  totalLines: number;
-  imported: number;
-  errors: number;
-  duplicates: number;
-  errorRows: ErrorRow[];
-}
-
-const MOCK_ERROR_ROWS: ErrorRow[] = [
-  { line: 14, column: 'estilo', value: 'Boho', problem: 'Estilo fora da lista fixa do Piê' },
-  { line: 27, column: 'preco', value: '199,00 reais', problem: 'Use apenas números (ex: 199.00)' },
-  { line: 41, column: 'foto_url', value: '—', problem: 'Campo obrigatório em branco' },
-  { line: 68, column: 'tamanhos', value: 'único', problem: 'Use U para tamanho único' },
-  { line: 92, column: 'cor', value: 'Terra', problem: 'Cor não reconhecida — use Marrom' },
-  {
-    line: 119,
-    column: 'link',
-    value: 'sualoja/produto',
-    problem: 'Link precisa começar com https://',
-  },
-];
 
 const REQUIRED_COLUMNS = [
   'nome',
@@ -49,33 +22,32 @@ const REQUIRED_COLUMNS = [
   'foto_url',
 ];
 
+type ImportState = 'idle' | 'uploading' | 'done';
+
 export default function ImportPage() {
-  const [importState, setImportState] = useState<ImportState>('done');
-  const [result, setResult] = useState<ImportResult | null>({
-    filename: 'produtos-agosto.csv',
-    totalLines: 134,
-    imported: 128,
-    errors: 6,
-    duplicates: 0,
-    errorRows: MOCK_ERROR_ROWS,
-  });
+  const { user } = useAuth();
+  const companyId = user?.id ?? '';
+  const [importState, setImportState] = useState<ImportState>('idle');
+  const [result, setResult] = useState<CsvImportResult | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
     if (!file.name.endsWith('.csv')) return;
+    if (!companyId) {
+      toast.error('Empresa não identificada. Faça login novamente.');
+      return;
+    }
     setImportState('uploading');
-    setTimeout(() => {
-      setResult({
-        filename: file.name,
-        totalLines: 134,
-        imported: 128,
-        errors: 6,
-        duplicates: 0,
-        errorRows: MOCK_ERROR_ROWS,
-      });
+    setResult(null);
+    try {
+      const res = await importProductsCsv(file);
+      setResult(res);
       setImportState('done');
-    }, 1500);
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, 'Falha ao importar o arquivo.'));
+      setImportState('idle');
+    }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,6 +73,30 @@ export default function ImportPage() {
     setImportState('idle');
     setResult(null);
     if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const downloadTemplate = () => {
+    downloadImportTemplate().catch(() => {
+      toast.error('Não foi possível baixar o modelo.');
+    });
+  };
+
+  const downloadErrors = () => {
+    if (!result) return;
+    const lines = [
+      'linha,coluna,valor,problema',
+      ...result.errorRows.map((r) => `${r.line},${r.column},${r.value},${r.problem}`),
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=UTF-8' });
+    const name = `erros-${result.filename}`;
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -159,9 +155,9 @@ export default function ImportPage() {
               <p className={styles.infoLabel}>MODELO DA PLANILHA</p>
               <p className={styles.infoText}>
                 Use o modelo do Piê para não errar os nomes das colunas. Estilo e cor precisam bater
-                com a lista fixa.
+                com a lista fixa. Tamanhos múltiplos separam por ponto-e-vírgula (;).
               </p>
-              <button type="button" className={styles.outlineButton}>
+              <button type="button" className={styles.outlineButton} onClick={downloadTemplate}>
                 Baixar modelo .csv
               </button>
             </div>
@@ -241,17 +237,17 @@ export default function ImportPage() {
                       </tbody>
                     </table>
                   </div>
+                  <button type="button" className={styles.outlineButton} onClick={downloadErrors}>
+                    Baixar erros em .csv
+                  </button>
                 </div>
               )}
 
               <div className={styles.resultsFooter}>
                 <div className={styles.footerActions}>
-                  <button type="button" className={styles.primaryButton}>
+                  <Link href="/products" className={styles.primaryButton}>
                     Ver os {result.imported} produtos
-                  </button>
-                  <button type="button" className={styles.outlineButton}>
-                    Baixar erros em .csv
-                  </button>
+                  </Link>
                 </div>
                 {result.errors > 0 && (
                   <p className={styles.footerNote}>

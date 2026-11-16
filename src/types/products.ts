@@ -1,3 +1,19 @@
+export interface CsvImportErrorRow {
+  line: number;
+  column: string;
+  value: string;
+  problem: string;
+}
+
+export interface CsvImportResult {
+  filename: string;
+  totalLines: number;
+  imported: number;
+  errors: number;
+  duplicates: number;
+  errorRows: CsvImportErrorRow[];
+}
+
 export type ProductStatus = 'PUBLISHED' | 'DRAFT' | 'PAUSED';
 
 export type ProductGender = 'FEMININO' | 'MASCULINO' | 'UNISSEX';

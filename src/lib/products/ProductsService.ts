@@ -1,5 +1,5 @@
 import type { AxiosError } from 'axios';
-import type { Product, ProductGender, ProductStatus } from '@/types/products';
+import type { CsvImportResult, Product, ProductGender, ProductStatus } from '@/types/products';
 import type { ProductFormData, ProductFormValues } from '@/types/productForm';
 import type { TaxonomyTerm } from '@/types/taxonomy';
 import { getTaxonomy } from '@/lib/taxonomy/TaxonomyService';
@@ -247,4 +247,47 @@ export async function deleteProductImage(
   companyId: string,
 ): Promise<void> {
   await Api.delete(`/products/${productId}/images/${imageId}?companyId=${companyId}`);
+}
+
+export async function importProductsCsv(file: File): Promise<CsvImportResult> {
+  const form = new FormData();
+  form.append('file', file);
+  const { data } = await Api.post<CsvImportResult>('/products/import/csv', form, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  });
+  return data;
+}
+
+export async function exportProductsCsv(): Promise<void> {
+  const { data, headers } = await Api.get<Blob>('/products/export/csv', {
+    responseType: 'blob',
+  });
+  const filename = extractFilename(headers) ?? 'produtos.csv';
+  triggerDownload(new Blob([data], { type: 'text/csv;charset=UTF-8' }), filename);
+}
+
+export async function downloadImportTemplate(): Promise<void> {
+  const { data, headers } = await Api.get<Blob>('/products/import/template', {
+    responseType: 'blob',
+  });
+  const filename = extractFilename(headers) ?? 'modelo-importacao.csv';
+  triggerDownload(new Blob([data], { type: 'text/csv;charset=UTF-8' }), filename);
+}
+
+function extractFilename(headers: Record<string, unknown> | undefined): string | undefined {
+  const disposition = headers?.['content-disposition'];
+  if (typeof disposition !== 'string') return undefined;
+  const match = disposition.match(/filename="?([^";]+)"?/);
+  return match?.[1];
+}
+
+function triggerDownload(blob: Blob, filename: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }

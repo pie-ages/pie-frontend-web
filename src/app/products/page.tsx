@@ -2,10 +2,11 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
-import { ArrowUpFromLine, Plus } from 'lucide-react';
+import { ArrowDownToLine, ArrowUpFromLine, Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Product, ProductFilters, ProductStatus } from '@/types/products';
 import {
+  exportProductsCsv,
   getProducts,
   getProductCount,
   updateProductAvailability,
@@ -196,6 +197,15 @@ export default function ProductsPage() {
     }
   };
 
+  const handleExportCsv = async () => {
+    try {
+      await exportProductsCsv();
+      toast.success('Produtos exportados para CSV.');
+    } catch {
+      toast.error('Não foi possível exportar os produtos. Tente novamente.');
+    }
+  };
+
   const confirmDelete = async () => {
     if (!productToDelete) return;
     const target = productToDelete;
@@ -218,6 +228,15 @@ export default function ProductsPage() {
     }
   };
 
+  const handleExportCsv = async () => {
+    try {
+      await exportProductsCsv();
+      toast.success('Produtos exportados para CSV.');
+    } catch {
+      toast.error('Não foi possível exportar os produtos. Tente novamente.');
+    }
+  };
+
   return (
     <div className={styles.page}>
       <StoreHeader />
@@ -228,9 +247,13 @@ export default function ProductsPage() {
             <h1 className={styles.title}>Produtos</h1>
           </div>
           <div className={styles.actions}>
-            <button type="button" className={styles.secondaryButton}>
+            <Link href="/import" className={styles.secondaryButton}>
               <ArrowUpFromLine size={16} style={{ color: 'inherit' }} />
               Importar CSV
+            </Link>
+            <button type="button" className={styles.secondaryButton} onClick={handleExportCsv}>
+              <ArrowDownToLine size={16} style={{ color: 'inherit' }} />
+              Exportar CSV
             </button>
             <Link href="/products/new" className={styles.primaryButton}>
               <Plus size={16} style={{ color: 'inherit' }} />
