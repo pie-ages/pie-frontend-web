@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Importar produtos — pie-frontend-web</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f3f4f6; color: #000; }
+  .mockup-header { position: fixed; top: 0; left: 0; right: 0; background: #1f2937; color: #fff; padding: 8px 16px; font-size: 12px; z-index: 100; }
+  .page { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .header-left { display: flex; flex-direction: column; gap: 4px; }
+  .pretitle { font-size: 14px; color: #201e1d; }
+  .title { font-size: 28px; font-weight: 600; }
+  .subtitle { font-size: 14px; color: #6b7280; line-height: 1.6; }
+  .content { max-width: 800px; }
+  .dropzone { border: 2px dashed rgba(32,30,29,0.4); border-radius: 12px; padding: 40px 24px; text-align: center; background: #f8f4f4; margin-bottom: 24px; cursor: pointer; }
+  .dropzone.dragging { border-color: #661414; background: #fff; }
+  .dropzone svg { width: 48px; height: 48px; stroke: #661414; stroke-width: 1.5; }
+  .dropzone-title { font-size: 18px; font-weight: 500; color: #201e1d; margin-top: 12px; }
+  .dropzone-hint { font-size: 14px; color: #6b7280; margin-top: 8px; }
+  .file-input { display: none; }
+  .choose-file { padding: 10px 20px; background: #661414; color: #fff; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; margin-top: 16px; }
+  .stats-row { display: flex; gap: 24px; margin-bottom: 24px; }
+  .stat-tile { text-align: center; }
+  .stat-number { font-size: 24px; font-weight: 600; color: #000; }
+  .stat-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .stat-number.error { color: #ff383c; }
+  .error-section { background: #fff; border: 1px solid rgba(32,30,29,0.4); border-radius: 12px; padding: 24px; margin-bottom: 24px; }
+  .error-section-title { font-size: 14px; font-weight: 500; color: #201e1d; margin-bottom: 16px; }
+  .error-table { width: 100%; border-collapse: collapse; }
+  .error-table th, .error-table td { padding: 10px 12px; border-bottom: 1px solid rgba(32,30,29,0.1); font-size: 13px; }
+  .error-table th { color: #6b7280; font-size: 12px; }
+  .error-table .code { color: #6b7280; display: block; margin-top: 4px; }
+  .error-table .td-problem { color: #ff383c; }
+  .results-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid rgba(32,30,29,0.1); background: #f9fafb; }
+  .footer-actions { display: flex; gap: 12px; }
+  .primary-button { padding: 10px 20px; background: #661414; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .outline-button { padding: 10px 20px; background: transparent; color: #661414; border: 1px solid #661414; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .footer-note { font-size: 12px; color: #6b7280; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="mockup-header">Mockup: /import — estado: done com relatório de erros</div>
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <p class="pretitle">Ateliê Nove</p>
+      <h1 class="title">Importar produtos</h1>
+    </div>
+  </div>
+
+  <div class="content">
+    <p class="subtitle">Suba a planilha inteira de uma vez. O Piê processa e devolve um relatório com as linhas que precisam de correção.</p>
+
+    <div class="dropzone" id="dropzone">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 14c0 1-1 2-2 2H7l-5 5V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v4H5a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4l5-5h10a2 2 0 0 0 2-2z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      <div class="dropzone-title">Processando arquivo…</div>
+      <div class="dropzone-hint">Arraste seu arquivo .csv aqui</div>
+    </div>
+
+    <div class="dropzone" id="dropzone-idle">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v4h2V5h7v7h2V5h7v7h2V5a2 2 0 0 0-2-2zm7 4h2v2h-2v-2zm-7 4h2v2H7v-2zm7-4h2v14a2 2 0 0 1-2 2h-2v-2H7v-2h2V5a2 2 0 0 1 2-2h2v2h7v2a2 2 0 0 1-2 2h-2v-2zm2-7c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zM13 9V3l-4 4h6zm-6 9c-2.21 0-4-1.79-4-4s2-4 4-4 4 2 4 4-2 4-4 4z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+      <div class="dropzone-title">Arraste seu arquivo .csv aqui</div>
+      <div class="dropzone-hint">Até 5.000 linhas por envio · máx. 10 MB</div>
+      <button type="button" class="choose-file">Escolher arquivo</button>
+      <input type="file" class="file-input" accept=".csv">
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-tile"><span class="stat-number">128</span><span class="stat-label">PRODUTOS IMPORTADOS</span></div>
+      <div class="stat-tile"><span class="stat-number">6</span><span class="stat-number error">LINHAS COM ERRO</span><span class="stat-label">LINHAS COM ERRO</span></div>
+      <div class="stat-tile"><span class="stat-number">0</span><span class="stat-label">DUPLICADOS IGNORADOS</span></div>
+    </div>
+
+    <div class="error-section">
+      <p class="error-section-title">RELATÓRIO DE ERROS</p>
+      <div class="error-table">
+        <table>
+          <thead>
+            <tr>
+              <th class="th">LINHA</th>
+              <th class="th">COLUNA</th>
+              <th class="th">VALOR ENVIADO</th>
+              <th class="th">PROBLEMA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>14</td>
+              <td class="code">estilo</td>
+              <td>Boho</td>
+              <td class="td-problem">Estilo fora da lista fixa do Piê</td>
+            </tr>
+            <tr>
+              <td>27</td>
+              <td class="code">preco</td>
+              <td>199,00 reais</td>
+              <td class="td-problem">Use apenas números (ex: 199.00)</td>
+            </tr>
+            <td>41</td>
+              <td class="code">foto_url</td>
+              <td>—</td>
+              <td class="td-problem">Campo obrigatório em branco</td>
+            </tr>
+            <tr>
+              <td>68</td>
+              <td class="code">tamanhos</td>
+              <td>único</td>
+              <td class="td-problem">Use U para tamanho único</td>
+            </tr>
+            <tr>
+              <td>92</td>
+              <td class="code">cor</td>
+              <td>Terra</td>
+              <td class="td-problem">Cor não reconhecida — use Marrom</td>
+            </tr>
+            <tr>
+              <td>119</td>
+              <td class="code">link</td>
+              <td>sualoja/produto</td>
+              <td class="td-problem">Link precisa começar com https://</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="results-footer">
+      <div class="footer-actions">
+        <button class="primary-button">Ver os 128 produtos</button>
+        <button class="outline-button">Baixar erros em .csv</button>
+      </div>
+      <p class="footer-note">As 6 linhas com erro não foram importadas.</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

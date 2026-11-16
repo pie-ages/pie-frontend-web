@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Solicitações de lojas — pie-frontend-web</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f3f4f6; color: #000; }
+  .mockup-header { position: fixed; top: 0; left: 0; right: 0; background: #1f2937; color: #fff; padding: 8px 16px; font-size: 12px; z-index: 100; }
+  .page { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .header-left { display: flex; flex-direction: column; gap: 4px; }
+  .pretitle { font-size: 14px; color: #201e1d; }
+  .title { font-size: 28px; font-weight: 600; }
+  .subtitle { font-size: 14px; color: #6b7280; line-height: 1.6; }
+  .stats-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .stats { display: flex; gap: 24px; }
+  .stat { text-align: center; }
+  .stat-number { font-size: 24px; font-weight: 600; color: #000; }
+  .stat-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .reload-button { padding: 10px 16px; background: #fff; color: #661414; border: 1px solid #661414; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; }
+  .card { background: #fff; border: 1px solid rgba(32,30,29,0.4); border-radius: 12px; padding: 24px; }
+  .card-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .logo-placeholder { width: 48px; height: 48px; background: #f3f4f6; border-radius: 8px; }
+  .store-name { font-size: 16px; font-weight: 500; color: #000; }
+  .submitted-at { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .card-fields { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+  .field { display: flex; flex-direction: column; gap: 4px; }
+  .field-label { font-size: 12px; color: #6b7280; }
+  .field-value { font-size: 14px; color: #201e1d; }
+  .field-email { font-size: 14px; color: #201e1d; }
+  .card-actions { display: flex; gap: 8px; }
+  .approve-button { padding: 8px 16px; background: #661414; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .refuse-button { padding: 8px 16px; background: #fff; color: #ff383c; border: 1px solid #ff383c; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .external-link { padding: 8px 16px; background: #fff; color: #661414; border: 1px solid #661414; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="mockup-header">Mockup: /store-requests — estado: fila com cartas + aprovar/recusar</div>
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <h1 class="title">Solicitações de lojas</h1>
+      <p class="subtitle">Lojas que pediram entrada na plataforma. Aprovar libera o painel de produtos e envia o acesso por e-mail.</p>
+    </div>
+  </div>
+
+  <div class="stats-bar">
+    <div class="stats">
+      <div class="stat"><strong class="stat-number">6</strong><span class="stat-label">aguardando</span></div>
+      <div class="stat"><strong class="stat-number">0</strong><span class="stat-label">aprovadas hoje</span></div>
+      <div class="stat"><strong class="stat-number">0</strong><span class="stat-label">recusadas hoje</span></div>
+    </div>
+    <button class="reload-button">Recarregar fila</button>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="card-top">
+        <div class="logo-placeholder"></div>
+        <div>
+          <p class="store-name">Ateliê Nove</p>
+          <p class="submitted-at">Enviado há 2 horas</p>
+        </div>
+      </div>
+      <div class="card-fields">
+        <div class="field"><p class="field-label">Razão Social</p><p class="field-value">Nove Confecções Ltda</p></div>
+        <div class="field"><p class="field-label">CNPJ</p><p class="field-value">12.345.678/0001-90</p></div>
+        <div class="field"><p class="field-label">Site / Instagram</p><p class="field-value">atelienove.exemplo.com.br</p></div>
+        <div class="field"><p class="field-label">Responsável</p><p class="field-value">Marina Bezerra</p><p class="field-email">marina@email.exemplo.com.br</p></div>
+      </div>
+      <div class="card-actions">
+        <button class="approve-button">Aprovar loja</button>
+        <button class="refuse-button">Recusar</button>
+        <a href="#" class="external-link">Abrir site</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <div class="logo-placeholder"></div>
+        <div>
+          <p class="store-name">Casa Vermelha</p>
+          <p class="submitted-at">Enviado ontem</p>
+        </div>
+      </div>
+      <div class="card-fields">
+        <div class="field"><p class="field-label">Razão Social</p><p class="field-value">Casa Vermelha Comércio de Roupas ME</p></div>
+        <div class="field"><p class="field-label">CNPJ</p><p class="field-value">08.221.984/0001-45</p></div>
+        <div class="field"><p class="field-label">Site / Instagram</p><p class="field-value">casavermelha_pie</p></div>
+        <div class="field"><p class="field-label">Responsável</p><p class="field-value">Rafael Lima</p><p class="field-email">rafael@email.exemplo.com.br</p></div>
+      </div>
+      <div class="card-actions">
+        <button class="approve-button">Aprovar loja</button>
+        <button class="refuse-button">Recusar</button>
+        <a href="#" class="external-link">Abrir Instagram</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <div class="logo-placeholder"></div>
+        <div>
+          <p class="store-name">Studio Ré</p>
+          <p class="submitted-at">Enviado ontem</p>
+        </div>
+      </div>
+      <div class="card-fields">
+        <div class="field"><p class="field-label">Razão Social</p><p class="field-value">Ré Studio Moda ME</p></div>
+        <div class="field"><p class="field-label">CNPJ</p><p class="field-value">31.887.556/0001-12</p></div>
+        <div class="field"><p class="field-label">Site / Instagram</p><p class="field-value">studiore_pie</p></div>
+        <div class="field"><p class="field-label">Responsável</p><p class="field-value">Helena Duarte</p><p class="field-email">contato@email.exemplo.com.br</p></div>
+      </div>
+      <div class="card-actions">
+        <button class="approve-button">Aprovar loja</button>
+        <button class="refuse-button">Recusar</button>
+        <a href="#" class="external-link">Abrir Instagram</a>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

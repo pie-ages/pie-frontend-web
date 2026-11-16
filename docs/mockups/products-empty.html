@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Produtos (vazio) — pie-frontend-web</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f3f4f6; color: #000; }
+  .mockup-header { position: fixed; top: 0; left: 0; right: 0; background: #1f2937; color: #fff; padding: 8px 16px; font-size: 12px; z-index: 100; }
+  .page { padding: 24px; max-width: 1200px; margin: 0 auto; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .header-left { display: flex; flex-direction: column; gap: 4px; }
+  .pretitle { font-size: 14px; color: #201e1d; }
+  .title { font-size: 28px; font-weight: 600; }
+  .actions { display: flex; gap: 12px; }
+  .btn-primary { padding: 10px 16px; background: #661414; color: #fff; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; text-decoration: none; }
+  .btn-secondary { padding: 10px 16px; background: #fff; color: #661414; border: 1px solid #661414; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .metric-card { background: #fff; border: 1px solid rgba(32,30,29,0.4); border-radius: 12px; padding: 20px; }
+  .metric-value { font-size: 24px; font-weight: 600; color: #000; }
+  .metric-label { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .filter-bar { background: #fff; border: 1px solid rgba(32,30,29,0.4); border-radius: 12px; padding: 16px; margin-bottom: 24px; display: flex; flex-wrap: wrap; gap: 16px; align-items: end; }
+  .search-wrapper { position: relative; flex: 1; min-width: 200px; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.6; }
+  .search-input { width: 100%; padding: 10px 12px 10px 40px; border: 1px solid rgba(32,30,29,0.4); border-radius: 8px; font-size: 14px; background: #f8f4f4; }
+  .select { padding: 10px 12px; border: 1px solid rgba(32,30,29,0.4); border-radius: 8px; font-size: 14px; background: #f8f4f4; min-width: 140px; }
+  .counter { font-size: 14px; color: #6b7280; margin-left: auto; }
+  .notice { color: #6b7280; font-size: 14px; margin-bottom: 24px; }
+</style>
+</head>
+<body>
+<div class="mockup-header">Mockup: /products — estado: vazio sem filtros</div>
+<div class="page">
+  <div class="header">
+    <div class="header-left">
+      <p class="pretitle">Marina Bezerra</p>
+      <h1 class="title">Produtos</h1>
+    </div>
+    <div class="actions">
+      <button class="btn-secondary">Importar CSV</button>
+      <a href="#" class="btn-primary">Novo produto</a>
+    </div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric-card"><div class="metric-value">0</div><div class="metric-label">Produtos publicados</div></div>
+    <div class="metric-card"><div class="metric-value">0</div><div class="metric-label">Rascunhos</div></div>
+    <div class="metric-card"><div class="metric-value">—</div><div class="metric-label">Salvos no closet</div></div>
+    <div class="metric-card"><div class="metric-value">—</div><div class="metric-label">Cliques para a loja</div></div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="search-wrapper">
+      <svg class="search-icon" viewBox="0 0 20 20" aria-hidden="true"><circle cx="9" cy="9" r="6"/><path d="m14 14 4 4" stroke-linecap="round"/></svg>
+      <input type="search" class="search-input" placeholder="Buscar por nome ou código" value="">
+    </div>
+    <select class="select"><option>Todos os estilos</option></select>
+    <select class="select"><option>Todas as peças</option></select>
+    <select class="select"><option>Todos os tamanhos</option></select>
+    <select class="select"><option>Todos os status</option></select>
+    <span class="counter">0 produtos</span>
+  </div>
+
+  <p class="notice">Nenhum produto cadastrado ainda.</p>
+</div>
+</body>
+</html>
