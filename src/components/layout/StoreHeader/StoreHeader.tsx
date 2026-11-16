@@ -47,7 +47,7 @@ export function StoreHeader() {
               ))}
             </nav>
           ) : (
-            <span className={`${styles.navItem} ${styles.navItemActive}`}>Produtos</span>
+            <span className={styles.navLabel}>Produtos</span>
           )}
         </div>
 
