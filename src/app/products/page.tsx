@@ -224,7 +224,6 @@ export default function ProductsPage() {
       <main className={styles.container}>
         <header className={styles.header}>
           <div>
-            <p className={styles.pretitle}>{user?.name ?? ''}</p>
             <h1 className={styles.title}>Produtos</h1>
           </div>
           <div className={styles.actions}>
