@@ -55,6 +55,9 @@ export function ProductsTable({
             const isAvailable = product.status === 'PUBLISHED';
             const isPending = pendingAvailabilityIds.has(product.id);
             const isActionPending = pendingActionIds.has(product.id);
+            const sizes = product.sizes ?? [];
+            const materials = product.materials ?? [];
+            const materialsLabel = materials.length > 0 ? materials.join(', ') : '—';
 
             return (
               <tr key={product.id} className={styles.row}>
@@ -78,10 +81,12 @@ export function ProductsTable({
                   <span className={styles.styleChip}>{product.style}</span>
                 </td>
                 <td className={`${styles.td} ${styles.softText}`}>{product.color}</td>
-                <td className={`${styles.td} ${styles.regularText}`}>{product.sizes.join(' ')}</td>
+                <td className={`${styles.td} ${styles.regularText}`}>
+                  {sizes.length > 0 ? sizes.join(' ') : '—'}
+                </td>
                 <td className={`${styles.td} ${styles.softText}`}>
-                  <span className={styles.materialText} title={product.materials.join(', ')}>
-                    {product.materials.length > 0 ? product.materials.join(', ') : '—'}
+                  <span className={styles.materialText} title={materials.join(', ')}>
+                    {materialsLabel}
                   </span>
                 </td>
                 <td className={styles.td}>{priceFormatter.format(product.price)}</td>
