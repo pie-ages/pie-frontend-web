@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
-import { uploadCompanyLogo } from '@/lib/company/CompanyService';
+import { updateCompany, uploadCompanyLogo, removeCompanyLogo } from '@/lib/company/CompanyService';
 import { type ProfileFormData } from './EditProfileModal';
 import { UserMenu } from './UserMenu';
 import styles from './storeHeader.module.css';
@@ -28,21 +28,23 @@ export function StoreHeader() {
   async function handleUpdateProfile(data: ProfileFormData) {
     if (!user) return;
 
-    if (data.avatar) {
-      try {
+    try {
+      const updated = await updateCompany(user.id, { name: data.name, email: data.email });
+      updateUser({ name: updated.name, email: updated.email });
+
+      if (data.avatar) {
         const { photo_url } = await uploadCompanyLogo(user.id, data.avatar);
         const separator = photo_url.includes('?') ? '&' : '?';
         updateUser({ photoUrl: `${photo_url}${separator}t=${Date.now()}` });
-        toast.success('Logo da empresa atualizada com sucesso!');
-      } catch (err) {
-        toast.error('Erro ao enviar a logo da empresa.');
-        throw err;
+      } else if (data.removeAvatar) {
+        await removeCompanyLogo(user.id);
+        updateUser({ photoUrl: null });
       }
-      return;
-    }
 
-    if (data.removeAvatar) {
-      toast.info('A remoção da logo ainda não está disponível.');
+      toast.success('Perfil atualizado com sucesso!');
+    } catch (err) {
+      toast.error('Erro ao salvar o perfil.');
+      throw err;
     }
   }
 
