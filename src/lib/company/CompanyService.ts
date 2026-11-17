@@ -1,11 +1,12 @@
 import Api from '@/lib/api';
 
-interface ApiCompany {
+export interface ApiCompany {
   id: string;
   name: string;
   email: string;
   role: string;
   status: string;
+  photo_url?: string | null;
 }
 
 export interface AdminCompany {
@@ -15,7 +16,12 @@ export interface AdminCompany {
   email: string;
   role: string;
   status: string;
+  photo_url?: string | null;
   createdAt: string;
+}
+
+export interface UploadCompanyLogoResponse {
+  photo_url: string;
 }
 
 export async function getCompany(companyId: string): Promise<ApiCompany> {
@@ -34,4 +40,24 @@ export async function updateCompanyStatus(
   status: 'ACTIVE' | 'INACTIVE',
 ): Promise<void> {
   await Api.patch(`/companies/${companyId}/status`, { status });
+}
+
+export async function uploadCompanyLogo(
+  companyId: string,
+  file: File,
+): Promise<UploadCompanyLogoResponse> {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const { data } = await Api.post<UploadCompanyLogoResponse>(
+    `/companies/${companyId}/logo`,
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    },
+  );
+
+  return data;
 }

@@ -7,12 +7,23 @@ import Api from '@/lib/api';
 import type { User } from '@/shared/user';
 import { clearSession, getAccessToken, getExpiresAt, getRefreshToken } from '@/utils/auth-storage';
 
+type ApiUser = User & { photo_url?: string | null };
+
+function normalizeUser(raw: ApiUser | null | undefined): User | null {
+  if (!raw) return null;
+  return {
+    ...raw,
+    photoUrl: raw.photoUrl ?? raw.photo_url ?? null,
+  };
+}
+
 type AuthContextValue = {
   user: User | null;
   isAuthenticated: boolean;
   isInitializing: boolean;
   signIn: (email: string, password: string) => Promise<User | null>;
   signOut: () => Promise<void>;
+  updateUser: (patch: Partial<User>) => void;
 };
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -39,7 +50,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           }
           try {
             const data = await refresh(storedRefresh);
-            setUser(data.user ?? null);
+            setUser(normalizeUser(data.user));
             setAuthenticated(true);
           } catch {
             clearSession();
@@ -49,8 +60,8 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
         setAuthenticated(true);
         try {
-          const { data } = await Api.get<User>('/auth/me');
-          setUser(data);
+          const { data } = await Api.get<ApiUser>('/auth/me');
+          setUser(normalizeUser(data));
         } catch {
           setUser(null);
         }
@@ -64,7 +75,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   async function signIn(email: string, password: string): Promise<User | null> {
     const data = await login(email, password);
-    const sessionUser = data.user ?? null;
+    const sessionUser = normalizeUser(data.user);
     setUser(sessionUser);
     setAuthenticated(true);
     return sessionUser;
@@ -76,9 +87,13 @@ export function AuthProvider({ children }: PropsWithChildren) {
     await logout();
   }
 
+  function updateUser(patch: Partial<User>) {
+    setUser((prev) => (prev ? { ...prev, ...patch } : prev));
+  }
+
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: authenticated, isInitializing, signIn, signOut }}
+      value={{ user, isAuthenticated: authenticated, isInitializing, signIn, signOut, updateUser }}
     >
       {children}
     </AuthContext.Provider>
