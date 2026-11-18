@@ -8,7 +8,7 @@
 
 .table {
   width: 100%;
-  min-width: 1180px;
+  min-width: 1240px;
   border-collapse: collapse;
   font-size: 0.875rem;
   table-layout: fixed;
@@ -24,7 +24,7 @@
   width: 90px;
 }
 .th:nth-child(4) {
-  width: 90px;
+  width: 100px;
 }
 .th:nth-child(5) {
   width: 110px;
@@ -39,16 +39,17 @@
   width: 120px;
 }
 .th:nth-child(9) {
-  width: 90px;
+  width: 110px;
 }
 .th:nth-child(10) {
-  width: 100px;
+  width: 130px;
 }
 .th:nth-child(11) {
   width: 160px;
 }
 
 .th {
+  overflow: hidden;
   text-align: left;
   padding: 0.75rem 1rem;
   font-size: 11px;
@@ -113,6 +114,7 @@
 }
 
 .photo {
+  box-sizing: border-box;
   display: block;
   width: 48px;
   height: 60px;
@@ -132,6 +134,8 @@
 
 .code {
   display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
   margin-top: 0.125rem;
   font-family: 'SF Mono', ui-monospace, 'Cascadia Code', 'Fira Mono', monospace;
   font-size: 13px;
