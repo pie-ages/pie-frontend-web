@@ -1,6 +1,7 @@
 .wrapper {
   flex: 1;
   width: 100%;
+  min-width: 0;
   min-height: calc(85px * 5);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
@@ -8,7 +9,6 @@
 
 .table {
   width: 100%;
-  min-width: 1160px;
   border-collapse: collapse;
   font-size: 0.875rem;
   table-layout: fixed;
@@ -17,6 +17,12 @@
 .th:nth-child(1) {
   width: 64px;
 }
+
+.scrollable {
+  width: 100%;
+  min-width: 1320px;
+}
+
 .th:nth-child(2) {
   width: auto;
 }
@@ -27,7 +33,7 @@
   width: 90px;
 }
 .th:nth-child(5) {
-  width: 110px;
+  width: 128px;
 }
 .th:nth-child(6) {
   width: 90px;
@@ -39,16 +45,22 @@
   width: 120px;
 }
 .th:nth-child(9) {
-  width: 90px;
+  width: 120px;
 }
 .th:nth-child(10) {
-  width: 100px;
+  width: 128px;
 }
 .th:nth-child(11) {
-  width: 140px;
+  width: 164px;
+}
+
+.th,
+.td {
+  box-sizing: border-box;
 }
 
 .th {
+  overflow: hidden;
   text-align: left;
   padding: 0.75rem 1rem;
   font-size: 11px;
@@ -74,6 +86,7 @@
 
 .td {
   padding: 0.75rem 1rem;
+  overflow: hidden;
   font-weight: 600;
   color: var(--color-text-secondary);
   vertical-align: middle;
