@@ -8,7 +8,6 @@ import type { Product, ProductFilters, ProductStatus } from '@/types/products';
 import {
   getProducts,
   getProductCount,
-  getClosetSavesCount,
   updateProductAvailability,
   deleteProduct,
   duplicateProduct,
@@ -29,7 +28,7 @@ type Status = 'loading' | 'error' | 'ready';
 const PER_PAGE_OPTIONS = [5, 10, 20];
 
 export default function ProductsPage() {
-  const { user } = useAuth();
+  const { user, isInitializing } = useAuth();
   const companyId = user?.id ?? '';
   const [status, setStatus] = useState<Status>('loading');
   const [products, setProducts] = useState<Product[]>([]);
@@ -47,7 +46,7 @@ export default function ProductsPage() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [publishedCount, setPublishedCount] = useState<number | null>(null);
   const [draftCount, setDraftCount] = useState<number | null>(null);
-  const [closetSavesCount, setClosetSavesCount] = useState<number | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   const isFirstLoad = useRef(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -60,9 +59,6 @@ export default function ProductsPage() {
         setPublishedCount(pub);
         setDraftCount(draft);
       })
-      .catch(() => {});
-    getClosetSavesCount(companyId)
-      .then(setClosetSavesCount)
       .catch(() => {});
   }, [companyId]);
 
@@ -104,7 +100,18 @@ export default function ProductsPage() {
     return () => {
       active = false;
     };
-  }, [companyId, debouncedSearch, filters.status, currentPage, perPage]);
+  }, [companyId, debouncedSearch, filters.status, currentPage, perPage, retryCount]);
+
+  const retryProducts = () => {
+    if (!companyId) {
+      window.location.reload();
+      return;
+    }
+
+    setStatus('loading');
+    setRetryCount((count) => count + 1);
+    refreshCounts();
+  };
 
   const styleOptions = useMemo(() => uniqueValues(products, 'style'), [products]);
   const pieceOptions = useMemo(() => uniqueValues(products, 'piece'), [products]);
@@ -114,6 +121,7 @@ export default function ProductsPage() {
   );
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== '');
+  const pageStatus = !companyId && !isInitializing ? 'error' : status;
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const safePage = Math.min(currentPage, totalPages);
   const hasClientFilters = filters.piece !== '' || filters.style !== '' || filters.size !== '';
@@ -239,21 +247,28 @@ export default function ProductsPage() {
           </div>
         </header>
 
-        {status === 'loading' && <p className={styles.notice}>Carregando produtos…</p>}
-
-        {status === 'error' && (
-          <p className={`${styles.notice} ${styles.noticeError}`}>
-            Não foi possível carregar os produtos. Tente novamente mais tarde.
+        {pageStatus === 'loading' && (
+          <p className={styles.notice} role="status">
+            Carregando produtos…
           </p>
         )}
 
-        {status === 'ready' && (
+        {pageStatus === 'error' && (
+          <section role="alert">
+            <p className={`${styles.notice} ${styles.noticeError}`}>
+              {!companyId
+                ? 'Não foi possível identificar a loja. Tente novamente.'
+                : 'Não foi possível carregar os produtos. Tente novamente.'}
+            </p>
+            <button type="button" className={styles.secondaryButton} onClick={retryProducts}>
+              Tentar novamente
+            </button>
+          </section>
+        )}
+
+        {pageStatus === 'ready' && (
           <>
-            <ProductsMetrics
-              publishedCount={publishedCount}
-              draftCount={draftCount}
-              closetSavesCount={closetSavesCount}
-            />
+            <ProductsMetrics publishedCount={publishedCount} draftCount={draftCount} />
 
             <ProductsFilter
               filters={filters}

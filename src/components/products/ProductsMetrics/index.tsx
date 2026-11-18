@@ -3,7 +3,6 @@ import styles from './styles.module.css';
 type ProductsMetricsProps = {
   publishedCount: number | null;
   draftCount: number | null;
-  closetSavesCount: number | null;
 };
 
 function formatCount(count: number | null): string {
@@ -11,15 +10,11 @@ function formatCount(count: number | null): string {
   return count.toLocaleString('pt-BR');
 }
 
-export function ProductsMetrics({
-  publishedCount,
-  draftCount,
-  closetSavesCount,
-}: ProductsMetricsProps) {
+export function ProductsMetrics({ publishedCount, draftCount }: ProductsMetricsProps) {
   const metrics = [
     { label: 'Produtos publicados', value: formatCount(publishedCount) },
     { label: 'Rascunhos', value: formatCount(draftCount) },
-    { label: 'Salvos no closet', value: formatCount(closetSavesCount) },
+    { label: 'Salvos no closet', value: '—' },
     { label: 'Cliques para a loja', value: '—' },
   ];
 

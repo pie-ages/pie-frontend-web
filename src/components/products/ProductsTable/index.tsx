@@ -68,7 +68,9 @@ export function ProductsTable({
                     )}
                   </td>
                   <td className={styles.td}>
-                    <span className={styles.name}>{product.name}</span>
+                    <span className={styles.name} title={product.name}>
+                      {product.name}
+                    </span>
                     <span className={styles.code}>{product.code}</span>
                   </td>
                   <td className={`${styles.td} ${styles.softText}`}>{product.piece}</td>
