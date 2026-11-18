@@ -1,13 +1,14 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { AlertCircle, PackageOpen, Plus, RefreshCw, SearchX } from 'lucide-react';
+import Link from 'next/link';
+import { Plus } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Product, ProductFilters, ProductStatus } from '@/types/products';
 import {
   getProducts,
   getProductCount,
+  getClosetSavesCount,
   updateProductAvailability,
   deleteProduct,
   duplicateProduct,
@@ -20,7 +21,6 @@ import { ProductsFilter } from '@/components/products/ProductsFilter';
 import { ProductsTable } from '@/components/products/ProductsTable';
 import { ProductsPagination } from '@/components/products/ProductsPagination';
 import { StoreHeader } from '@/components/layout/StoreHeader/StoreHeader';
-import Button from '@/components/ui/Button';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 import styles from './page.module.css';
 
@@ -29,8 +29,7 @@ type Status = 'loading' | 'error' | 'ready';
 const PER_PAGE_OPTIONS = [5, 10, 20];
 
 export default function ProductsPage() {
-  const router = useRouter();
-  const { user, isInitializing } = useAuth();
+  const { user } = useAuth();
   const companyId = user?.id ?? '';
   const [status, setStatus] = useState<Status>('loading');
   const [products, setProducts] = useState<Product[]>([]);
@@ -48,6 +47,7 @@ export default function ProductsPage() {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [publishedCount, setPublishedCount] = useState<number | null>(null);
   const [draftCount, setDraftCount] = useState<number | null>(null);
+  const [closetSavesCount, setClosetSavesCount] = useState<number | null>(null);
 
   const isFirstLoad = useRef(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -60,20 +60,19 @@ export default function ProductsPage() {
         setPublishedCount(pub);
         setDraftCount(draft);
       })
-      .catch(() => {
-        toast.error('Não foi possível atualizar o resumo do catálogo. Tente novamente.', {
-          id: 'products-count-error',
-        });
-      });
+      .catch(() => {});
+    getClosetSavesCount(companyId)
+      .then(setClosetSavesCount)
+      .catch(() => {});
   }, [companyId]);
 
   useEffect(() => {
     refreshCounts();
   }, [refreshCounts]);
 
-  const fetchProducts = useCallback(() => {
+  useEffect(() => {
     let active = true;
-    if (!companyId) return () => {};
+    if (!companyId) return;
 
     if (isFirstLoad.current) {
       setStatus('loading');
@@ -107,18 +106,6 @@ export default function ProductsPage() {
     };
   }, [companyId, debouncedSearch, filters.status, currentPage, perPage]);
 
-  useEffect(() => {
-    return fetchProducts();
-  }, [fetchProducts]);
-
-  const retryProducts = () => {
-    if (!companyId) {
-      window.location.reload();
-      return;
-    }
-    fetchProducts();
-  };
-
   const styleOptions = useMemo(() => uniqueValues(products, 'style'), [products]);
   const pieceOptions = useMemo(() => uniqueValues(products, 'piece'), [products]);
   const filteredProducts = useMemo(
@@ -127,7 +114,6 @@ export default function ProductsPage() {
   );
 
   const hasActiveFilters = Object.values(filters).some((v) => v !== '');
-  const pageStatus = !companyId && !isInitializing ? 'error' : status;
   const totalPages = Math.max(1, Math.ceil(total / perPage));
   const safePage = Math.min(currentPage, totalPages);
   const hasClientFilters = filters.piece !== '' || filters.style !== '' || filters.size !== '';
@@ -242,165 +228,100 @@ export default function ProductsPage() {
       <StoreHeader />
       <main className={styles.container}>
         <header className={styles.header}>
-          <div className={styles.headerContent}>
+          <div>
             <h1 className={styles.title}>Produtos</h1>
-            <p className={styles.subtitle}>
-              Gerencie as peças, disponibilidade e variações exibidas na sua vitrine.
-            </p>
           </div>
           <div className={styles.actions}>
-            <Button
-              type="button"
-              variant="primary"
-              className={styles.newProductButton}
-              onClick={() => router.push('/products/new')}
-            >
-              <Plus size={18} strokeWidth={2.25} />
-              <span>Novo produto</span>
-            </Button>
+            <Link href="/products/new" className={styles.primaryButton}>
+              <Plus size={16} style={{ color: 'inherit' }} />
+              Novo produto
+            </Link>
           </div>
         </header>
 
-        {pageStatus === 'loading' && (
-          <div className={styles.skeletonWrapper} aria-busy="true" aria-label="Carregando produtos">
-            <div className={styles.skeletonMetrics}>
-              <div className={styles.skeletonCard} />
-              <div className={styles.skeletonCard} />
-              <div className={styles.skeletonCard} />
-            </div>
-            <div className={styles.catalogCard}>
-              <div className={styles.skeletonFilterBar} />
-              <div className={styles.skeletonRows}>
-                <div className={styles.skeletonRow} />
-                <div className={styles.skeletonRow} />
-                <div className={styles.skeletonRow} />
-                <div className={styles.skeletonRow} />
-              </div>
-            </div>
-          </div>
+        {status === 'loading' && <p className={styles.notice}>Carregando produtos…</p>}
+
+        {status === 'error' && (
+          <p className={`${styles.notice} ${styles.noticeError}`}>
+            Não foi possível carregar os produtos. Tente novamente mais tarde.
+          </p>
         )}
 
-        {pageStatus === 'error' && (
-          <section className={styles.stateCard} role="alert">
-            <div className={`${styles.stateIcon} ${styles.stateIconError}`}>
-              <AlertCircle size={22} />
-            </div>
-            <h2 className={styles.stateTitle}>Não foi possível carregar os produtos</h2>
-            <p className={styles.stateDescription}>
-              {!companyId && !isInitializing
-                ? 'Não foi possível identificar a loja. Recarregue a página e tente novamente.'
-                : 'Ocorreu uma falha ao buscar o catálogo da loja. Verifique sua conexão e tente novamente.'}
-            </p>
-            <Button
-              type="button"
-              variant="secondary"
-              className={styles.retryButton}
-              onClick={retryProducts}
-            >
-              <RefreshCw size={15} />
-              Tentar novamente
-            </Button>
-          </section>
-        )}
-
-        {pageStatus === 'ready' && (
+        {status === 'ready' && (
           <>
-            <ProductsMetrics publishedCount={publishedCount} draftCount={draftCount} />
+            <ProductsMetrics
+              publishedCount={publishedCount}
+              draftCount={draftCount}
+              closetSavesCount={closetSavesCount}
+            />
 
-            <section className={styles.catalogCard}>
-              <div className={styles.filterSection}>
-                <ProductsFilter
-                  filters={filters}
-                  styleOptions={styleOptions}
-                  pieceOptions={pieceOptions}
-                  resultsLabel={resultsLabel}
-                  onFiltersChange={applyFilters}
-                />
-              </div>
+            <ProductsFilter
+              filters={filters}
+              styleOptions={styleOptions}
+              pieceOptions={pieceOptions}
+              resultsLabel={resultsLabel}
+              onFiltersChange={applyFilters}
+            />
 
-              <div className={isFetching ? styles.tableFetching : styles.tableBody}>
-                {total === 0 && !hasActiveFilters && (
-                  <div className={styles.emptyState}>
-                    <div className={styles.stateIcon}>
-                      <PackageOpen size={22} />
-                    </div>
-                    <h2 className={styles.stateTitle}>Nenhum produto cadastrado ainda</h2>
-                    <p className={styles.stateDescription}>
-                      Comece adicionando a primeira peça para montar o catálogo da sua loja.
-                    </p>
-                    <Button
-                      type="button"
-                      variant="primary"
-                      onClick={() => router.push('/products/new')}
-                    >
-                      <Plus size={16} />
-                      Cadastrar primeiro produto
-                    </Button>
-                  </div>
-                )}
+            <div className={isFetching ? styles.tableFetching : undefined}>
+              {total === 0 && !hasActiveFilters && (
+                <p className={styles.notice}>Nenhum produto cadastrado ainda.</p>
+              )}
 
-                {((total === 0 && hasActiveFilters) ||
-                  (total > 0 && filteredProducts.length === 0)) && (
-                  <div className={styles.emptyState}>
-                    <div className={styles.stateIcon}>
-                      <SearchX size={22} />
-                    </div>
-                    <h2 className={styles.stateTitle}>Nenhum produto encontrado</h2>
-                    <p className={styles.stateDescription}>
-                      Não encontramos peças com os filtros selecionados. Tente ajustar ou limpar a
-                      busca.
-                    </p>
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      onClick={() => applyFilters(EMPTY_FILTERS)}
-                    >
-                      Limpar filtros
-                    </Button>
-                  </div>
-                )}
+              {((total === 0 && hasActiveFilters) ||
+                (total > 0 && filteredProducts.length === 0)) && (
+                <div className={styles.emptyState}>
+                  <p>Nenhum produto encontrado com esses filtros.</p>
+                  <button
+                    type="button"
+                    className={styles.clearFilters}
+                    onClick={() => applyFilters(EMPTY_FILTERS)}
+                  >
+                    Limpar filtros
+                  </button>
+                </div>
+              )}
 
-                {filteredProducts.length > 0 && (
-                  <div className={styles.tableSection}>
-                    <ProductsTable
-                      products={filteredProducts}
-                      pendingAvailabilityIds={pendingAvailabilityIds}
-                      pendingActionIds={pendingActionIds}
-                      onToggleAvailability={requestAvailabilityChange}
-                      onDuplicate={handleDuplicate}
-                      onDelete={setProductToDelete}
+              {filteredProducts.length > 0 && (
+                <div className={styles.tableSection}>
+                  <ProductsTable
+                    products={filteredProducts}
+                    pendingAvailabilityIds={pendingAvailabilityIds}
+                    pendingActionIds={pendingActionIds}
+                    onToggleAvailability={requestAvailabilityChange}
+                    onDuplicate={handleDuplicate}
+                    onDelete={setProductToDelete}
+                  />
+                  <div className={styles.tableFooter}>
+                    <label className={styles.perPageLabel}>
+                      Exibindo
+                      <select
+                        className={styles.perPageSelect}
+                        value={perPage}
+                        onChange={(e) => {
+                          const n = Number(e.target.value);
+                          localStorage.setItem('products:perPage', String(n));
+                          setPerPage(n);
+                          setCurrentPage(1);
+                        }}
+                      >
+                        {PER_PAGE_OPTIONS.map((n) => (
+                          <option key={n} value={n}>
+                            {n}
+                          </option>
+                        ))}
+                      </select>
+                      por página
+                    </label>
+                    <ProductsPagination
+                      currentPage={safePage}
+                      totalPages={totalPages}
+                      onPageChange={changePage}
                     />
-                    <footer className={styles.tableFooter}>
-                      <label className={styles.perPageLabel}>
-                        Exibindo
-                        <select
-                          className={styles.perPageSelect}
-                          value={perPage}
-                          onChange={(e) => {
-                            const n = Number(e.target.value);
-                            localStorage.setItem('products:perPage', String(n));
-                            setPerPage(n);
-                            setCurrentPage(1);
-                          }}
-                        >
-                          {PER_PAGE_OPTIONS.map((n) => (
-                            <option key={n} value={n}>
-                              {n}
-                            </option>
-                          ))}
-                        </select>
-                        por página
-                      </label>
-                      <ProductsPagination
-                        currentPage={safePage}
-                        totalPages={totalPages}
-                        onPageChange={changePage}
-                      />
-                    </footer>
                   </div>
-                )}
-              </div>
-            </section>
+                </div>
+              )}
+            </div>
           </>
         )}
       </main>

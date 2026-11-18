@@ -113,6 +113,11 @@ export async function getProductCount(companyId: string, status: ProductStatus):
   return data.total;
 }
 
+export async function getClosetSavesCount(companyId: string): Promise<number> {
+  const { data } = await Api.get<{ count: number }>(`/products/company/${companyId}/closet-saves`);
+  return data.count;
+}
+
 export async function deleteProduct(id: string): Promise<void> {
   await Api.delete(`/products/${id}`);
 }
